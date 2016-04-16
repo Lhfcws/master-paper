@@ -41,7 +41,8 @@ public class WeiboUserESScanner implements CliRunner {
 
     public WeiboUserESScanner() {
         conf = MLLibConfiguration.getInstance();
-        indexSearcher = new DefaultYZIndexSearcher(conf.get(CommConsts.ES_CLUSTER_NAME), INDEX, "user", conf.get(CommConsts.ES_HOSTS).split(","));
+        String esClusterName = conf.get(CommConsts.ES_CLUSTER_NAME, "amkt_es_cluster");
+        indexSearcher = new DefaultYZIndexSearcher(esClusterName, INDEX, "user", conf.get(CommConsts.ES_HOSTS).split(","));
     }
 
     @Override
