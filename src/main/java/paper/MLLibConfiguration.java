@@ -1,0 +1,56 @@
+package paper;
+
+import com.yeezhao.commons.config.AbstractCommConfiguration;
+import org.apache.hadoop.conf.Configuration;
+
+/**
+ * Configuration, only can be accessed by getInstance()
+ *
+ * @author lhfcws
+ */
+public class MLLibConfiguration extends AbstractCommConfiguration {
+    private static final String[] confParams = {
+//            MLLibConsts.PARAM_HORNBILL_PORT,
+//            MLLibConsts.PARAM_KEYWORD_TOPN,
+//            CommConsts.SPARK_MASTER_URL
+//            MLLibConsts.PARAM_WORD2VECTOR_PORT
+    };
+
+    private static final String[] servParams = {
+    };
+
+    /**
+     * Singleton instance.
+     */
+    private static MLLibConfiguration _singleton = null;
+
+    /**
+     * Singleton access method.
+     */
+    public static MLLibConfiguration getInstance() {
+        if (_singleton == null)
+            synchronized (MLLibConfiguration.class) {
+                if (_singleton == null) {
+                    _singleton = new MLLibConfiguration();
+                }
+            }
+        return _singleton;
+    }
+
+    /**
+     * Private constructor.
+     */
+    private MLLibConfiguration() {
+        super();
+    }
+
+    @Override
+    protected void init(Configuration configuration) {
+        this.addResource("mllib-config.xml");
+    }
+
+    @Override
+    protected void fastLoadConfigs() throws Exception {
+
+    }
+}

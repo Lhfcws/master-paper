@@ -1,6 +1,6 @@
 package paper.community;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.yeezhao.commons.util.FileSystemHelper;
 import com.yeezhao.commons.util.exec.CommandExecutor;
 import com.yeezhao.commons.util.exec.LineHandler;

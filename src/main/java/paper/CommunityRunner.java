@@ -1,6 +1,6 @@
 package paper;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.google.common.reflect.TypeToken;
 import com.yeezhao.commons.util.*;
 import org.apache.commons.cli.CommandLine;

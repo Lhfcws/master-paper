@@ -1,6 +1,6 @@
 package paper.query;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.yeezhao.commons.util.StringUtil;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.*;

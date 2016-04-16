@@ -1,6 +1,6 @@
 package paper.query;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.datatub.iresearch.analyz.util.SparkUtil;
 import com.yeezhao.commons.util.FileSystemHelper;
 import com.yeezhao.commons.util.GsonSerializer;

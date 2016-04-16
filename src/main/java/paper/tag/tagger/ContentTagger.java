@@ -1,6 +1,6 @@
 package paper.tag.tagger;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.datatub.iresearch.analyz.util.KwFormatUtil;
 import com.datatub.iresearch.analyz.util.SegUtil;
 import com.yeezhao.commons.util.AdvFile;

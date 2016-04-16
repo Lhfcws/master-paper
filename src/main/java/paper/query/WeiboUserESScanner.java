@@ -1,6 +1,6 @@
 package paper.query;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.yeezhao.commons.util.AdvCli;
 import com.yeezhao.commons.util.CliRunner;
 import com.yeezhao.commons.util.config.CommConsts;

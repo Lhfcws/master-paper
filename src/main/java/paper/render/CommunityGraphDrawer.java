@@ -1,6 +1,6 @@
 package paper.render;
 
-import com.datatub.iresearch.analyz.base.MLLibConfiguration;
+import paper.MLLibConfiguration;
 import com.yeezhao.commons.util.FileSystemHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
