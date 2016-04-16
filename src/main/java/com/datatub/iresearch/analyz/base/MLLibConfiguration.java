@@ -1,6 +1,7 @@
 package com.datatub.iresearch.analyz.base;
 
 import com.yeezhao.commons.config.AbstractCommConfiguration;
+import com.yeezhao.commons.util.config.CommConsts;
 import org.apache.hadoop.conf.Configuration;
 
 /**
@@ -12,7 +13,7 @@ public class MLLibConfiguration extends AbstractCommConfiguration {
     private static final String[] confParams = {
 //            MLLibConsts.PARAM_HORNBILL_PORT,
 //            MLLibConsts.PARAM_KEYWORD_TOPN,
-//            CommConsts.SPARK_MASTER_URL
+            CommConsts.SPARK_MASTER_URL
 //            MLLibConsts.PARAM_WORD2VECTOR_PORT
     };
 
