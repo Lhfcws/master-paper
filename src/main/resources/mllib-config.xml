@@ -1,0 +1,80 @@
+<configuration>
+    <!-- path -->
+    <property>
+        <name>dual.model.path</name>
+        <value>/tmp/iresearch/models</value>
+        <description>HDFS model path</description>
+    </property>
+    <property>
+        <name>snt.model.path</name>
+        <value>/tmp/hornbill/mllib</value>
+        <description>HDFS model path</description>
+    </property>
+    <!-- Spark -->
+    <property>
+        <name>spark.global.mem</name>
+        <value>6g</value>
+    </property>
+    <property>
+        <name>spark.common.mem</name>
+        <value>6g</value>
+    </property>
+    <property>
+        <name>spark.local.mem</name>
+        <value>1g</value>
+    </property>
+    <!-- Sentiment -->
+    <property>
+        <name>snt.tmp.libsvm.prefix</name>
+        <value>/tmp/libsvm-snt-rf-</value>
+    </property>
+    <property>
+        <name>snt.tmp.accurate.prefix</name>
+        <value>/tmp/snt-acc-model-</value>
+    </property>
+    <property>
+        <name>sentiment.lr.threshold</name>
+        <value>0.5</value>
+    </property>
+    <property>
+        <name>snt.rf.summarize.corpus.base</name>
+        <value>${snt.model.path}/snt.rf.summarize.corpus.base</value>
+    </property>
+    <property>
+        <name>snt.rf.summarize.corpus.incr</name>
+        <value>${snt.model.path}/snt.rf.summarize.corpus.incr</value>
+    </property>
+    <property>
+        <name>snt.rf.model.base</name>
+        <value>${snt.model.path}/snt/snt.rf.model.base</value>
+    </property>
+    <property>
+        <name>snt.rf.model.incr</name>
+        <value>${snt.model.path}/snt/snt.rf.model.incr</value>
+    </property>
+    <property>
+        <name>snt.lr.model.base</name>
+        <value>${snt.model.path}/snt/snt.lr.model.base</value>
+    </property>
+    <property>
+        <name>snt.lr.model.incr</name>
+        <value>${snt.model.path}/snt/snt.lr.model.incr</value>
+    </property>
+    <property>
+        <name>snt.lr.summarize.corpus.incr</name>
+        <value>${snt.model.path}/snt.lr.summarize.corpus.incr</value>
+    </property>
+    <property>
+        <name>snt.accurate.model</name>
+        <value>${snt.model.path}/snt/snt.accurate.model</value>
+    </property>
+    <!-- ForceAtlas2c -->
+    <property>
+        <name>fa2c.community.attraction</name>
+        <value>100</value>
+    </property>
+    <property>
+        <name>fa2c.community.repulsion</name>
+        <value>1</value>
+    </property>
+</configuration>
