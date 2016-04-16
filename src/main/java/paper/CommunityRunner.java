@@ -202,8 +202,10 @@ public class CommunityRunner implements CliRunner {
                     .addUser(uid, allUsers.get(uid));
         }
         try {
-            fs.deleteLocalFile(graphmlFile);
-        } catch (Exception ignore) {}
+            if (fs.existLocalFile(pyresFile))
+                fs.deleteLocalFile(graphmlFile);
+        } catch (Exception ignore) {
+        }
 
         return this;
     }
