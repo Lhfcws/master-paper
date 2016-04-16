@@ -20,9 +20,10 @@ import java.util.*;
  * @since 16/1/6.
  */
 public class WeiboContentScanSpark implements Serializable {
-    private static Configuration conf = MLLibConfiguration.getInstance();
 
     public void run(String input, String output) {
+        Configuration conf = MLLibConfiguration.getInstance();
+
         Map<String, String> params = new HashMap<>();
         params.put("spark.executor.memory", "2g");
         SparkConf sparkConf = SparkUtil.createSparkConf("ESWeiboContentScan", 40, this.getClass(), params);
@@ -79,6 +80,7 @@ public class WeiboContentScanSpark implements Serializable {
 
         private HbaseContentScanner() {
             try {
+                Configuration conf = MLLibConfiguration.getInstance();
                 hConnection = HConnectionManager.createConnection(conf);
                 hTableInterface = hConnection.getTable(TABLE);
             } catch (IOException e) {

@@ -5,12 +5,14 @@ import com.yeezhao.commons.config.ConfigUtil;
 import com.yeezhao.commons.util.config.CommConsts;
 import org.apache.hadoop.conf.Configuration;
 
+import java.io.Serializable;
+
 /**
  * Configuration, only can be accessed by getInstance()
  *
  * @author lhfcws
  */
-public class MLLibConfiguration extends AbstractCommConfiguration {
+public class MLLibConfiguration extends AbstractCommConfiguration implements Serializable {
     private static final String[] confParams = {
 //            MLLibConsts.PARAM_HORNBILL_PORT,
 //            MLLibConsts.PARAM_KEYWORD_TOPN,

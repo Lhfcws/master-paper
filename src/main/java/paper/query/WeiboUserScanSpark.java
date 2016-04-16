@@ -20,9 +20,9 @@ import java.util.*;
  * @since 16/1/4.
  */
 public class WeiboUserScanSpark implements Serializable {
-    private Configuration conf = MLLibConfiguration.getInstance();
 
     public void run(final String uid, String outputUsers, String outputRel) {
+        Configuration conf = MLLibConfiguration.getInstance();
         Map<String, String> params = new HashMap<>();
         params.put("spark.executor.memory", "2g");
 
