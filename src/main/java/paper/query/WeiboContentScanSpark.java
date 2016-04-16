@@ -35,7 +35,7 @@ public class WeiboContentScanSpark implements Serializable {
         }
         Map<String, String> params = new HashMap<>();
         params.put("spark.executor.memory", "2g");
-        SparkConf sparkConf = SparkUtil.createSparkConf("ESWeiboContentScan", 40, this.getClass(), params);
+        SparkConf sparkConf = SparkUtil.createSparkConf("Comm-ESWeiboContentScan", 40, this.getClass(), params);
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
         jsc.textFile(input).repartition(20).flatMap(new FlatMapFunction<String, String>() {
             @Override

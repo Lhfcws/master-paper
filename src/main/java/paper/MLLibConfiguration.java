@@ -16,7 +16,7 @@ public class MLLibConfiguration extends AbstractCommConfiguration implements Ser
     private static final String[] confParams = {
 //            MLLibConsts.PARAM_HORNBILL_PORT,
 //            MLLibConsts.PARAM_KEYWORD_TOPN,
-//            CommConsts.SPARK_MASTER_URL
+            CommConsts.SPARK_MASTER_URL,
 //            MLLibConsts.PARAM_WORD2VECTOR_PORT
             CommConsts.ES_HOSTS
     };
