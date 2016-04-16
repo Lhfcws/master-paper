@@ -20,6 +20,7 @@ public class WeiboUser implements Serializable {
     public String sex;
     public Integer birthYear;
     public Double weight = 1.0;
+    // 关注这个user的人
     public List<String> follows;
     public FreqDist<String> tags;
 

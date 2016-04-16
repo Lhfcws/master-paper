@@ -121,8 +121,8 @@ public class CommunityRunner implements CliRunner {
 
         scanUser();
         communityDetect();
-        truncCommunities();
         calcCommUserWeight();
+        truncCommunities();
         scanContent();
         tagging();
         render();
@@ -233,7 +233,7 @@ public class CommunityRunner implements CliRunner {
         for (int i = 0; i < list.size(); i++) {
             Community community = list.get(i);
             // lookup kols
-            kolLookup.lookup(community);
+            kolLookup.lookup(community, topNKol);
             System.out.println("[INFO] Looked up " + community.id + " kol size: " + community.kols.size());
             // filter rubbish community
             if (rubbishCommunityRecognizer.isRubbish(community)) {
