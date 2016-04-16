@@ -24,6 +24,15 @@ public class WeiboContentScanSpark implements Serializable {
     public void run(String input, String output) {
         Configuration conf = MLLibConfiguration.getInstance();
 
+        FileSystemHelper fs = FileSystemHelper.getInstance(conf);
+        try {
+            fs.deleteFile(output + ".dir");
+        } catch (IOException e) {
+        }
+        try {
+            fs.deleteFile(output);
+        } catch (IOException e) {
+        }
         Map<String, String> params = new HashMap<>();
         params.put("spark.executor.memory", "2g");
         SparkConf sparkConf = SparkUtil.createSparkConf("ESWeiboContentScan", 40, this.getClass(), params);
@@ -35,13 +44,12 @@ public class WeiboContentScanSpark implements Serializable {
                 String uid = weiboUser.id;
                 return HbaseContentScanner.getInstance().scanContent(uid);
             }
-        }).saveAsTextFile(output);
+        }).saveAsTextFile(output + ".dir");
         jsc.stop();
 
         System.out.println("Merging file " + output);
-        FileSystemHelper fs = FileSystemHelper.getInstance(conf);
         try {
-            fs.mergeDirsToFile(output + ".txt", output);
+            fs.mergeDirsToFile(output, output + ".dir");
         } catch (IOException e) {
             e.printStackTrace();
         }

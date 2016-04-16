@@ -36,9 +36,9 @@ public class WeiboUserScanSpark implements Serializable {
         FileSystemHelper fs = FileSystemHelper.getInstance(conf);
         try {
             fs.deleteFile(outputRel);
-            fs.deleteFile(outputRel + ".txt");
+            fs.deleteFile(outputRel + ".dir");
             fs.deleteFile(outputUsers);
-            fs.deleteFile(outputUsers + ".txt");
+            fs.deleteFile(outputUsers + ".dir");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,7 +64,7 @@ public class WeiboUserScanSpark implements Serializable {
                 }
                 return GsonSerializer.toJson(weiboUser);
             }
-        }).saveAsTextFile(outputUsers);
+        }).saveAsTextFile(outputUsers + ".dir");
         jsc.stop();
 
         System.out.println("Begin to run spark2.");
@@ -84,15 +84,15 @@ public class WeiboUserScanSpark implements Serializable {
 
                 return sb.toString();
             }
-        }).saveAsTextFile(outputRel);
+        }).saveAsTextFile(outputRel + ".dir");
         jsc.stop();
 
         System.out.println("Spark finished. Merging file ...");
 
         try {
-            fs.mergeDirsToFile(outputRel + ".txt", outputRel);
+            fs.mergeDirsToFile(outputRel, outputRel + ".dir");
             System.out.println("Merged " + outputRel);
-            fs.mergeDirsToFile(outputUsers + ".txt", outputUsers);
+            fs.mergeDirsToFile(outputUsers, outputUsers + ".dir");
             System.out.println("Merged " + outputUsers);
         } catch (IOException e) {
             e.printStackTrace();
