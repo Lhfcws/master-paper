@@ -70,7 +70,7 @@ public class WeiboUserScanSpark implements Serializable {
         System.out.println("Begin to run spark2.");
         sparkConf = SparkUtil.createSparkConf("Comm-BuildRelations", 40, this.getClass(), params);
         jsc = new JavaSparkContext(sparkConf);
-        jsc.textFile(outputUsers).map(new Function<String, String>() {
+        jsc.textFile(outputUsers + ".dir").map(new Function<String, String>() {
             @Override
             public String call(String s) throws Exception {
                 WeiboUser v1 = GsonSerializer.fromJson(s, WeiboUser.class);
