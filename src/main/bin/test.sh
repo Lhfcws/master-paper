@@ -1,1 +1,1 @@
-sh run.sh community -uid 1757537265 -nocontent -notag $@
+sh run.sh community -uid 1757537265 -nocontent -notag -noscanuser

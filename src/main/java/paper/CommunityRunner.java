@@ -179,15 +179,14 @@ public class CommunityRunner implements CliRunner {
     protected CommunityRunner communityDetect() throws Exception {
         System.out.println("[INFO] Detect communities.");
         String pyresFile = String.format(PYRESULT_FILE, theUserID);
+        String graphmlFile = String.format(GRAPHML_FILE, theUserID);
         if (!opts.contains(PARAM_NODETECTION)) {
-            String graphmlFile = String.format(GRAPHML_FILE, theUserID);
             CommDetectPythonInvoker invoker = new CommDetectPythonInvoker();
             invoker.run(
                     graphmlFile,
                     pyresFile
             );
             System.out.println("[RUN] delete local file : " + graphmlFile);
-            fs.deleteLocalFile(graphmlFile);
         }
 
         List<String> list = AdvFile.readLines(new FileInputStream(pyresFile));
@@ -202,6 +201,9 @@ public class CommunityRunner implements CliRunner {
             this.communities.setDefault(cid).getCommunity(cid)
                     .addUser(uid, allUsers.get(uid));
         }
+        try {
+            fs.deleteLocalFile(graphmlFile);
+        } catch (Exception ignore) {}
 
         return this;
     }
