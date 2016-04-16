@@ -1,6 +1,7 @@
 package com.datatub.iresearch.analyz.base;
 
 import com.yeezhao.commons.config.AbstractCommConfiguration;
+import com.yeezhao.commons.config.ConfigUtil;
 import com.yeezhao.commons.util.config.CommConsts;
 import org.apache.hadoop.conf.Configuration;
 
@@ -52,6 +53,6 @@ public class MLLibConfiguration extends AbstractCommConfiguration {
 
     @Override
     protected void fastLoadConfigs() throws Exception {
-
+        ConfigUtil.fastLoadConfig(this, CommConsts.ORG, CommConsts.APP, confParams, new String[] {});
     }
 }
