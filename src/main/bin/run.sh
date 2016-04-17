@@ -35,8 +35,8 @@ done
 # Sentiment
 if [ "$COMMAND" = "sntLRTrain" ]; then
   CLASS=com.datatub.hornbill.mllib.text.sentiment.shorttext.tools.LinearRegressionTrainerCli
-elif [ "$COMMAND" = "sntRetrain" ]; then
-  CLASS=com.datatub.hornbill.mllib.text.sentiment.shorttext.tools.SntBatchRetrainer
+elif [ "$COMMAND" = "hdfs" ]; then
+  CLASS=paper.test.OnlineHDFS
 elif [ "$COMMAND" = "community" ]; then
   CLASS=paper.CommunityRunner
 else
