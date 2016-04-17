@@ -210,7 +210,7 @@ public class CommunityRunner implements CliRunner {
         try {
             if (fs.existLocalFile(pyresFile)) {
                 return this;
-    //            System.out.println("[RUN] delete local file : " + graphmlFile);
+                //            System.out.println("[RUN] delete local file : " + graphmlFile);
 //                fs.deleteLocalFile(graphmlFile);
             }
         } catch (Exception ignore) {
@@ -383,8 +383,13 @@ public class CommunityRunner implements CliRunner {
         for (Map.Entry<String, List<String>> entry : userRelations.entrySet()) {
             if (nodeTypes.get(entry.getKey()) == null) {
                 Community community = this.communities.getCommByUser(entry.getKey());
-                nodeTypes.put(entry.getKey(), new NodeType(entry.getKey(), community.color,
-                        (float) community.getUserWeight(entry.getKey())));
+                if (community == null) continue;
+
+                nodeTypes.put(entry.getKey(), new NodeType(
+                        entry.getKey(),
+                        community.color,
+                        (float) community.getUserWeight(entry.getKey())
+                ));
             }
             NodeType src = nodeTypes.get(entry.getKey());
 
@@ -392,8 +397,13 @@ public class CommunityRunner implements CliRunner {
                 for (String dest : entry.getValue()) {
                     if (nodeTypes.get(dest) == null) {
                         Community community = this.communities.getCommByUser(dest);
-                        nodeTypes.put(dest, new NodeType(dest, community.color,
-                                (float) community.getUserWeight(dest)));
+                        if (community == null) continue;
+
+                        nodeTypes.put(dest, new NodeType(
+                                dest,
+                                community.color,
+                                (float) community.getUserWeight(dest)
+                        ));
                     }
                     graph.setDefault(src, new LinkedList<NodeType>());
                     graph.get(src).add(nodeTypes.get(dest));
