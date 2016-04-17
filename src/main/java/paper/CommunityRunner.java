@@ -1,6 +1,5 @@
 package paper;
 
-import paper.MLLibConfiguration;
 import com.google.common.reflect.TypeToken;
 import com.yeezhao.commons.util.*;
 import org.apache.commons.cli.CommandLine;
@@ -208,9 +207,11 @@ public class CommunityRunner implements CliRunner {
                     .addUser(uid, allUsers.get(uid));
         }
         try {
-            System.out.println("[RUN] delete local file : " + graphmlFile);
-            if (fs.existLocalFile(pyresFile))
-                fs.deleteLocalFile(graphmlFile);
+            if (fs.existLocalFile(pyresFile)) {
+                return this;
+    //            System.out.println("[RUN] delete local file : " + graphmlFile);
+//                fs.deleteLocalFile(graphmlFile);
+            }
         } catch (Exception ignore) {
         }
 
@@ -314,16 +315,20 @@ public class CommunityRunner implements CliRunner {
             );
         }
 
-        System.out.println("[RUN] read contents.");
-        AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENT_FILE, theUserID)), new ILineParser() {
-            @Override
-            public void parseLine(String s) {
-                String[] arr = s.split("\t");
-                if (arr.length == 2) {
-                    userContent.add(arr[0], arr[1]);
+        try {
+            System.out.println("[RUN] read contents.");
+            AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENT_FILE, theUserID)), new ILineParser() {
+                @Override
+                public void parseLine(String s) {
+                    String[] arr = s.split("\t");
+                    if (arr.length == 2) {
+                        userContent.add(arr[0], arr[1]);
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            System.err.println(e.getMessage() + ", [ERROR] No content available.");
+        }
 
         return this;
     }

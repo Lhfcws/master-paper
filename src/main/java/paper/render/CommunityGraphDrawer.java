@@ -47,7 +47,7 @@ public abstract class CommunityGraphDrawer {
     protected AutoLayout autoLayout;
     protected String fileType;
     protected boolean isDirected = true;
-    protected static long LAYOUT_TIME = 15;   // 15 sec
+    protected long LAYOUT_TIME = 15;   // 15 sec
 
     protected Configuration conf;
 
