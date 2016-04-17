@@ -13,6 +13,8 @@ public class KOLLookup {
 
     public List<String> lookup(Community community, int topk) {
         Set<String> selected = new HashSet<String>();
+        if (topk > community.users.size()) topk = community.users.size();
+
         for (int i = 0; i < topk; i++) {
             double max = 0;
             String uid = null;
