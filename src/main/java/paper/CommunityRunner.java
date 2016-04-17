@@ -11,10 +11,7 @@ import paper.community.*;
 import paper.community.model.*;
 import paper.query.WeiboContentScanSpark;
 import paper.query.WeiboUserScanSpark;
-import paper.render.ColorBuilder;
-import paper.render.CommunityGraphDrawer;
-import paper.render.NodeType;
-import paper.render.WbGraphDrawer;
+import paper.render.*;
 import paper.tag.TfWdCalculator;
 import paper.tag.tagger.ContentTagger;
 import paper.tag.tagger.Tagger;
@@ -178,15 +175,24 @@ public class CommunityRunner implements CliRunner {
      */
     protected CommunityRunner communityDetect() throws Exception {
         System.out.println("[INFO] Detect communities.");
+
         String pyresFile = String.format(PYRESULT_FILE, theUserID);
         String graphmlFile = String.format(GRAPHML_FILE, theUserID);
+
+
+        System.out.println("[COMMUNITY] generate local tmp graphml file");
+        GraphmlDrawer graphmlDrawer = new GraphmlDrawer(conf, CommunityGraphDrawer.GRAPHML_FILE, false);
+        graphmlDrawer.buildGraph(userRelations);
+        graphmlDrawer.startLayout();
+        graphmlDrawer.export(graphmlFile);
+        graphmlDrawer.stopLayout();
+
         if (!opts.contains(PARAM_NODETECTION)) {
             CommDetectPythonInvoker invoker = new CommDetectPythonInvoker();
             invoker.run(
                     graphmlFile,
                     pyresFile
             );
-            System.out.println("[RUN] delete local file : " + graphmlFile);
         }
 
         List<String> list = AdvFile.readLines(new FileInputStream(pyresFile));
@@ -202,6 +208,7 @@ public class CommunityRunner implements CliRunner {
                     .addUser(uid, allUsers.get(uid));
         }
         try {
+            System.out.println("[RUN] delete local file : " + graphmlFile);
             if (fs.existLocalFile(pyresFile))
                 fs.deleteLocalFile(graphmlFile);
         } catch (Exception ignore) {
