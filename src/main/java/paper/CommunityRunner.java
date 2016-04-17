@@ -443,6 +443,7 @@ public class CommunityRunner implements CliRunner {
             }
 
             this.run();
+            System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
