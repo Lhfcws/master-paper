@@ -17,7 +17,8 @@ public class DocWrapper {
     public static WeiboUser parseUserYZDoc(YZDoc yzDoc) {
         WeiboUser weiboUser = new WeiboUser();
 
-        weiboUser.id = url2mid(yzDoc.getId());
+//        weiboUser.id = url2mid(yzDoc.getId());
+        weiboUser.id = yzDoc.getId();
 //        weiboUser.area = getString(yzDoc, "area");
         weiboUser.area = getString(yzDoc, "省份");
 //        weiboUser.city = getString(yzDoc, "city");

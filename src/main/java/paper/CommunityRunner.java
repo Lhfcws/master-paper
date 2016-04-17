@@ -149,6 +149,7 @@ public class CommunityRunner implements CliRunner {
                 allUsers.put(weiboUser.id, weiboUser);
             }
         });
+        System.out.println("[LOAD] user size: " + allUsers.size());
 
         // Load relations
         AdvFile.loadFileInDelimitLine(fs.getHDFSFileInputStream(String.format(REL_FILE, theUserID)), new ILineParser() {
@@ -162,6 +163,7 @@ public class CommunityRunner implements CliRunner {
                 }
             }
         });
+        System.out.println("[LOAD] Load userRelations : " + userRelations.values().size());
 
         return this;
     }
@@ -178,15 +180,14 @@ public class CommunityRunner implements CliRunner {
         String pyresFile = String.format(PYRESULT_FILE, theUserID);
         String graphmlFile = String.format(GRAPHML_FILE, theUserID);
 
-
-        System.out.println("[COMMUNITY] generate local tmp graphml file");
-        GraphmlDrawer graphmlDrawer = new GraphmlDrawer(conf, CommunityGraphDrawer.GRAPHML_FILE, false);
-        graphmlDrawer.buildGraph(userRelations);
-        graphmlDrawer.startLayout();
-        graphmlDrawer.export(graphmlFile);
-        graphmlDrawer.stopLayout();
-
         if (!opts.contains(PARAM_NODETECTION)) {
+            System.out.println("[COMMUNITY] generate local tmp graphml file");
+            GraphmlDrawer graphmlDrawer = new GraphmlDrawer(conf, CommunityGraphDrawer.GRAPHML_FILE, false);
+            graphmlDrawer.buildGraph(userRelations);
+            graphmlDrawer.startLayout();
+            graphmlDrawer.export(graphmlFile);
+            graphmlDrawer.stopLayout();
+
             CommDetectPythonInvoker invoker = new CommDetectPythonInvoker();
             invoker.run(
                     graphmlFile,
@@ -327,7 +328,7 @@ public class CommunityRunner implements CliRunner {
                 }
             });
         } catch (Exception e) {
-            System.err.println(e.getMessage() + ", [ERROR] No content available.");
+            System.err.println("[ERROR] No content available.");
         }
 
         return this;
