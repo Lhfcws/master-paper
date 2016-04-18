@@ -473,11 +473,13 @@ public class CommunityRunner implements CliRunner {
         options.addOption(PARAM_CLI_UID, true, "the user uid");
         options.addOption(PARAM_CLI_TOPNCOMM, true, "top N community to process");
         options.addOption(PARAM_CLI_TOPNKOL, true, "top N kol to present tags");
+        options.addOption(PARAM_CLI_TOPNDOTS, true, "top N dots to render");
 
         options.addOption(PARAM_NOSCANUSER, false, "no scan user");
         options.addOption(PARAM_NODETECTION, false, "no community detection");
         options.addOption(PARAM_NOSCANCONTENT, false, "no scan content");
-        options.addOption(PARAM_NOTAG, false, "dont tag");
+        options.addOption(PARAM_NOTAG, false, "dont tag users");
+        options.addOption(PARAM_NOCOMMTAG, false, "dont tag community");
         options.addOption(PARAM_NORENDER, false, "no render");
 
         return options;
