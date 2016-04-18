@@ -14,9 +14,13 @@ import paper.render.*;
 import paper.tag.TfWdCalculator;
 import paper.tag.tagger.ContentTagger;
 import paper.tag.tagger.Tagger;
+import paper.tag.tagger.TaggerSpark;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -34,6 +38,7 @@ public class CommunityRunner implements CliRunner {
     public static final String PARAM_NOSCANCONTENT = "nocontent";
     public static final String PARAM_NODETECTION = "nodetect";
     public static final String PARAM_NOTAG = "notag";
+    public static final String PARAM_NOCOMMTAG = "nocommtag";
     public static final String PARAM_NORENDER = "norender";
 
     public static List<String> NOT_OPT_PARAMS = Arrays.asList(new String[]{
@@ -316,44 +321,92 @@ public class CommunityRunner implements CliRunner {
             );
         }
 
-        try {
-            System.out.println("[RUN] read contents.");
-            AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENT_FILE, theUserID)), new ILineParser() {
-                @Override
-                public void parseLine(String s) {
-                    String[] arr = s.split("\t");
-                    if (arr.length == 2) {
-                        userContent.add(arr[0], arr[1]);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            System.err.println("[ERROR] No content available.");
-        }
+//        try {
+//            System.out.println("[RUN] read contents.");
+//            AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENT_FILE, theUserID)), new ILineParser() {
+//                @Override
+//                public void parseLine(String s) {
+//                    String[] arr = s.split("\t");
+//                    if (arr.length == 2) {
+//                        userContent.add(arr[0], arr[1]);
+//                    }
+//                }
+//            });
+//        } catch (Exception e) {
+//            System.err.println("[ERROR] No content available.");
+//        }
 
         return this;
     }
 
-    protected CommunityRunner tagging() {
+    protected CommunityRunner tagging() throws IOException {
         System.out.println("[INFO] tagging");
 
         if (!opts.contains(PARAM_NOTAG)) {
-            for (Community community : communities.getAllCommunities()) {
-                System.out.println("[RUN] user tagging for community " + community.id);
-                for (WeiboUser user : community.users.values()) {
-                    if (userContent.containsKey(user.id)) {
-                        for (Tagger tagger : taggers) {
-                            FreqDist<String> userTags = tagger.tag(userContent.get(user.id));
-                            user.tags.merge(userTags);
-                        }
+//            for (Community community : communities.getAllCommunities()) {
+//                System.out.println("[RUN] user tagging for community " + community.id);
+//                for (WeiboUser user : community.users.values()) {
+//                    if (userContent.containsKey(user.id)) {
+//                        for (Tagger tagger : taggers) {
+//                            FreqDist<String> userTags = tagger.tag(userContent.get(user.id));
+//                            user.tags.merge(userTags);
+//                        }
+//                    }
+//                }
+//
+//                System.out.println("[RUN] community tagging for community " + community.id);
+//                TfWdCalculator tfWdCalculator = new TfWdCalculator();
+//                tfWdCalculator.setWeiboUsers(community.users.values());
+//                community.commTags = tfWdCalculator.calc(topTag);
+//            }
+            System.out.println("[RUN] TaggerSpark");
+            TaggerSpark taggerSpark = new TaggerSpark();
+            taggerSpark.run(
+                    String.format(CONTENT_FILE, theUserID),
+                    String.format(TAG_FILE, theUserID)
+            );
+        }
+
+        if (!opts.contains(PARAM_NOCOMMTAG)) {
+            InputStream inputStream = fs.getHDFSFileInputStream(String.format(TAG_FILE, theUserID));
+            final Type freqDistStrType = new TypeToken<FreqDist<String>>() {
+            }.getType();
+
+            AdvFile.loadFileInRawLines(inputStream, new ILineParser() {
+                @Override
+                public void parseLine(String s) {
+                    String[] sarr = s.split("\t");
+                    if (sarr.length == 2) {
+                        FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+                        Community community = communities.getCommByUser(sarr[0]);
+                        if (community != null)
+                            community.users.get(sarr[0]).tags = freqDist;
                     }
                 }
+            });
 
-                System.out.println("[RUN] community tagging for community " + community.id);
+            System.out.println("[RUN] Calculate comm tags and write to file.");
+            BatchWriter batchWriter = new BatchWriter(new FileOutputStream(
+                    String.format(TAG_FILE, theUserID)
+            ));
+            for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.commTags = tfWdCalculator.calc(topTag);
+                community.commTags = tfWdCalculator.calc(3);
+                System.out.println("[DBEUG] " + community.id + " " + community.commTags);
+
+                StringBuilder sb = new StringBuilder(community.id).append("\t")
+                        .append(ColorBuilder.toRGBStr(community.color)).append("\t");
+                List<Map.Entry<String, Double>> entries = community.commTags.sortValues(false);
+                if (entries != null && !entries.isEmpty()) {
+                    for (Map.Entry<String, Double> entry : entries)
+                        sb.append(entry.getKey()).append("$");
+                    sb.setLength(sb.length() - 1);
+                }
+
+                batchWriter.writeWithCache(sb.append("\n").toString());
             }
+
         }
 
         return this;

@@ -1,5 +1,6 @@
 package paper.query;
 
+import org.apache.spark.api.java.function.Function2;
 import paper.MLLibConfiguration;
 import com.datatub.iresearch.analyz.util.SparkUtil;
 import com.yeezhao.commons.util.FileSystemHelper;
@@ -33,8 +34,9 @@ public class WeiboContentScanSpark implements Serializable {
             fs.deleteFile(output);
         } catch (IOException e) {
         }
+
         Map<String, String> params = new HashMap<>();
-        params.put("spark.executor.memory", "2g");
+        params.put("spark.executor.memory", "3g");
         SparkConf sparkConf = SparkUtil.createSparkConf("Comm-ESWeiboContentScan", 40, this.getClass(), params);
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
         jsc.textFile(input).repartition(20).flatMap(new FlatMapFunction<String, String>() {
@@ -44,17 +46,17 @@ public class WeiboContentScanSpark implements Serializable {
                 String uid = weiboUser.id;
                 return HbaseContentScanner.getInstance().scanContent(uid);
             }
-        }).saveAsTextFile(output + ".dir");
+        }).saveAsTextFile(output);
         jsc.stop();
 
-        System.out.println("Merging file " + output);
-        try {
-            fs.mergeDirsToFile(output, output + ".dir");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        System.out.println("Merging file " + output);
+//        try {
+//            fs.mergeDirsToFile(output, output + ".dir");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        System.out.println("DONE");
+        System.out.println("WeiboContentScanSpark DONE");
     }
 
     public static <T> Set<T> intersect(Set<T> set1, Set<T> set2) {
@@ -107,9 +109,9 @@ public class WeiboContentScanSpark implements Serializable {
             ResultScanner scanner = hTableInterface.getScanner(scan);
             for (Result result : scanner) {
                 byte[] v = result.getValue("crawl".getBytes(), "fp_content".getBytes());
-                String content = new String(v).replaceAll("\t", " ");
-
-                list.add(uid + "\t" + content);
+                String content = new String(v).replaceAll("\t", " ").trim();
+                if (content.length() > 5)
+                    list.add(uid + "\t" + content);
             }
             return list;
         }
