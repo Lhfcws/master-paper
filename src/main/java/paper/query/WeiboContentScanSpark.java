@@ -102,7 +102,7 @@ public class WeiboContentScanSpark implements Serializable {
         public List<String> scanContent(String uid) throws IOException {
             Scan scan = new Scan();
             scan.setStartRow(("sn|" + uid + "|wb|").getBytes());
-            scan.setStartRow(("sn|" + uid + "|wc|").getBytes());
+            scan.setStopRow(("sn|" + uid + "|wc|").getBytes());
             scan.addColumn("crawl".getBytes(), "fp_content".getBytes());
 
             LinkedList<String> list = new LinkedList<>();
