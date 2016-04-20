@@ -55,6 +55,7 @@ public class CommunityRunner implements CliRunner {
     public static final String PYRESULT_FILE = ROOT + "%s-pyresult.txt";
     public static final String GEXF_FILE = ROOT + "%s-relation.gexf";
     public static final String TAG_FILE = ROOT + "%s-tags.txt";
+    public static final String COMMTAG_FILE = ROOT + "%s-commtags.txt";
 
     // UTIL PARAMS
     protected Configuration conf = MLLibConfiguration.getInstance();
@@ -247,6 +248,7 @@ public class CommunityRunner implements CliRunner {
             System.out.println("[INFO] Looked up " + community.id + " kol size: " + community.kols.size());
             // filter rubbish community
             if (rubbishCommunityRecognizer.isRubbish(community)) {
+                System.out.println("[RUBBISH] " + community.id + ", kols: " + community.kols);
                 continue;
             }
 
@@ -379,7 +381,7 @@ public class CommunityRunner implements CliRunner {
 
             System.out.println("[RUN] Calculate comm tags and write to file.");
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(
-                    String.format(TAG_FILE, theUserID)
+                    String.format(COMMTAG_FILE, theUserID)
             ));
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
@@ -399,6 +401,7 @@ public class CommunityRunner implements CliRunner {
                 batchWriter.writeWithCache(sb.append("\n").toString());
             }
 
+            batchWriter.flushNClose();
         }
 
         return this;
