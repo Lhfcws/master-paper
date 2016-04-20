@@ -42,9 +42,9 @@ public class WeiboContentScanSpark implements Serializable {
         jsc.textFile(input).repartition(20).flatMap(new FlatMapFunction<String, String>() {
             @Override
             public Iterable<String> call(String s) throws Exception {
-                WeiboUser weiboUser = GsonSerializer.fromJson(s.trim(), WeiboUser.class);
-                String uid = weiboUser.id;
-                return HbaseContentScanner.getInstance().scanContent(uid);
+//                WeiboUser weiboUser = GsonSerializer.fromJson(s.trim(), WeiboUser.class);
+//                String uid = s;
+                return HbaseContentScanner.getInstance().scanContent(s);
             }
         }).saveAsTextFile(output);
         jsc.stop();
