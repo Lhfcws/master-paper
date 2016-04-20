@@ -1,12 +1,9 @@
 package paper.tag.tagger;
 
+import com.yeezhao.commons.util.*;
 import paper.MLLibConfiguration;
 import com.datatub.iresearch.analyz.util.KwFormatUtil;
 import com.datatub.iresearch.analyz.util.SegUtil;
-import com.yeezhao.commons.util.AdvFile;
-import com.yeezhao.commons.util.AdvHashMap;
-import com.yeezhao.commons.util.FreqDist;
-import com.yeezhao.commons.util.ILineParser;
 import org.ansj.library.UserDefineLibrary;
 
 import java.io.IOException;
@@ -46,10 +43,9 @@ public class ContentTagger implements Tagger {
 
     @Override
     public void load() throws IOException {
-        MLLibConfiguration conf = MLLibConfiguration.getInstance();
-        String tagRuleFile = "";
+        String tagRuleFile = "content_tag_rules.txt";
 
-        AdvFile.loadFileInDelimitLine(conf.getConfResourceAsInputStream(tagRuleFile), new ILineParser() {
+        AdvFile.loadFileInDelimitLine(ClassUtil.getResourceAsInputStream(tagRuleFile), new ILineParser() {
             @Override
             public void parseLine(String s) {
                 String[] arr = KwFormatUtil.simpleFormat(s).split("\t");
