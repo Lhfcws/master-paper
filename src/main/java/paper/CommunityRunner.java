@@ -212,14 +212,6 @@ public class CommunityRunner implements CliRunner {
             this.communities.setDefault(cid).getCommunity(cid)
                     .addUser(uid, allUsers.get(uid));
         }
-        try {
-            if (fs.existLocalFile(pyresFile)) {
-                return this;
-                //            System.out.println("[RUN] delete local file : " + graphmlFile);
-//                fs.deleteLocalFile(graphmlFile);
-            }
-        } catch (Exception ignore) {
-        }
 
         return this;
     }
