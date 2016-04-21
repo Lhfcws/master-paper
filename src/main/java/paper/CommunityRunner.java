@@ -389,8 +389,8 @@ public class CommunityRunner implements CliRunner {
                 community.commTags = tfWdCalculator.calc(3);
                 System.out.println("[DBEUG] " + community.id + " " + community.commTags);
 
-                StringBuilder sb = new StringBuilder(community.id).append("\t")
-                        .append(ColorBuilder.toRGBStr(community.color)).append("\t");
+                StringBuilder sb = new StringBuilder().append(community.id).append("\t")
+                        .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
                 List<Map.Entry<String, Double>> entries = community.commTags.sortValues(false);
                 if (entries != null && !entries.isEmpty()) {
                     for (Map.Entry<String, Double> entry : entries)
