@@ -12,9 +12,7 @@ import paper.query.WeiboContentScanSpark;
 import paper.query.WeiboUserScanSpark;
 import paper.render.*;
 import paper.tag.TfWdCalculator;
-import paper.tag.tagger.ContentTagger;
-import paper.tag.tagger.Tagger;
-import paper.tag.tagger.TaggerSpark;
+import paper.tag.tagger.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -55,6 +53,8 @@ public class CommunityRunner implements CliRunner {
     public static final String PYRESULT_FILE = ROOT + "%s-pyresult.txt";
     public static final String GEXF_FILE = ROOT + "%s-relation.gexf";
     public static final String TAG_FILE = ROOT + "%s-tags.txt";
+    public static final String CONTENTTAG_FILE = ROOT + "%s-contenttags.txt";
+    public static final String ATTRTAG_FILE = ROOT + "%s-attrtags.txt";
     public static final String COMMTAG_FILE = ROOT + "%s-commtags.txt";
 
     // UTIL PARAMS
@@ -353,12 +353,26 @@ public class CommunityRunner implements CliRunner {
 //                tfWdCalculator.setWeiboUsers(community.users.values());
 //                community.commTags = tfWdCalculator.calc(topTag);
 //            }
-            System.out.println("[RUN] TaggerSpark");
-            TaggerSpark taggerSpark = new TaggerSpark();
-            taggerSpark.run(
+            System.out.println("[RUN] ContentTaggerSpark");
+            ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
+            contentTaggerSpark.run(
                     String.format(CONTENT_FILE, theUserID),
-                    String.format(TAG_FILE, theUserID)
+                    String.format(CONTENTTAG_FILE, theUserID)
             );
+
+            System.out.println("[RUN] AttrTaggerSpark");
+            AttrTaggerSpark attrTaggerSpark = new AttrTaggerSpark();
+            attrTaggerSpark.run(
+                    String.format(USER_FILE, theUserID),
+                    String.format(ATTRTAG_FILE, theUserID)
+            );
+
+            System.out.println("[RUN] Merge tags");
+            MergeTagSpark mergeTagSpark = new MergeTagSpark();
+            List<String> inputs = new ArrayList<>();
+            inputs.add(String.format(CONTENTTAG_FILE, theUserID));
+            inputs.add(String.format(ATTRTAG_FILE, theUserID));
+            mergeTagSpark.run(inputs, String.format(TAG_FILE, theUserID));
         }
 
         if (!opts.contains(PARAM_NOCOMMTAG)) {
