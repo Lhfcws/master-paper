@@ -41,7 +41,7 @@ public class ContentTagger implements Tagger {
 
     @Override
     public void load() throws IOException {
-        String tagRuleFile = "content_tag_rules1.txt";
+        String tagRuleFile = "content_tag_rules.txt";
 
         AdvFile.loadFileInDelimitLine(ClassUtil.getResourceAsInputStream(tagRuleFile), new ILineParser() {
             @Override
