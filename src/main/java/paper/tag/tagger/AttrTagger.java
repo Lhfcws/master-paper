@@ -6,6 +6,7 @@ import paper.tag.tagger.mapping.KeywordMapping;
 import paper.tag.tagger.mapping.RangeMapping;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author lhfcws
  * @since 16/4/10
  */
-public class AttrTagger {
+public class AttrTagger implements Serializable {
     RangeMapping ageMap = new RangeMapping();
     KeywordMapping areaMap = new KeywordMapping();
 

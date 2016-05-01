@@ -15,13 +15,14 @@ import paper.community.model.WeiboUser;
 import scala.Tuple2;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * @author lhfcws
  * @since 16/4/27
  */
-public class AttrTaggerSpark {
+public class AttrTaggerSpark implements Serializable {
 
     public void run(String input, String output) {
         Configuration conf = MLLibConfiguration.getInstance();

@@ -16,13 +16,14 @@ import paper.MLLibConfiguration;
 import scala.Tuple2;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * @author lhfcws
  * @since 16/4/28
  */
-public class MergeTagSpark {
+public class MergeTagSpark implements Serializable {
     public void run(List<String> inputs, String output) {
         Configuration conf = MLLibConfiguration.getInstance();
 
