@@ -3,7 +3,7 @@
 import os
 
 fp = open("../../resources/usr_grp.txt", "r", encoding="utf-8")
-fw = open("../../resources/content_tag_rules.txt", "w", encoding="utf-8")
+fw = open("../../resources/content_tag_rules1.txt", "w", encoding="utf-8")
 
 
 def filter_single_char(ls):

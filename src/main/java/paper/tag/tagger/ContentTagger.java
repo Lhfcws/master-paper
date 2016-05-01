@@ -1,10 +1,8 @@
 package paper.tag.tagger;
 
 import com.yeezhao.commons.util.*;
-import paper.MLLibConfiguration;
 import com.datatub.iresearch.analyz.util.KwFormatUtil;
 import com.datatub.iresearch.analyz.util.SegUtil;
-import org.ansj.library.UserDefineLibrary;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -43,7 +41,7 @@ public class ContentTagger implements Tagger {
 
     @Override
     public void load() throws IOException {
-        String tagRuleFile = "content_tag_rules.txt";
+        String tagRuleFile = "content_tag_rules1.txt";
 
         AdvFile.loadFileInDelimitLine(ClassUtil.getResourceAsInputStream(tagRuleFile), new ILineParser() {
             @Override
