@@ -75,7 +75,10 @@ public class ContentTaggerSpark implements Serializable {
             @Override
             public Iterable<String> call(Tuple2<String, FreqDist<String>> tp) throws Exception {
                 List<String> list = new ArrayList<String>();
-                list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(tp._2())).toString());
+                FreqDist<String> freqDist = new FreqDist<String>();
+                for (String key : tp._2().keySet())
+                    freqDist.put(key, 1);
+                list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(freqDist)).toString());
                 return list;
             }
         }).saveAsTextFile(output);
