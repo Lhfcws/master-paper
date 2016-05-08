@@ -358,11 +358,11 @@ public class CommunityRunner implements CliRunner {
 //                community.contentTags = tfWdCalculator.calc(topTag);
 //            }
             System.out.println("[RUN] ContentTaggerSpark");
-            ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
-            contentTaggerSpark.run(
-                    String.format(CONTENT_FILE, theUserID),
-                    String.format(CONTENTTAG_FILE, theUserID)
-            );
+//            ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
+//            contentTaggerSpark.run(
+//                    String.format(CONTENT_FILE, theUserID),
+//                    String.format(CONTENTTAG_FILE, theUserID)
+//            );
 
             System.out.println("[RUN] AttrTaggerSpark");
             AttrTaggerSpark attrTaggerSpark = new AttrTaggerSpark();
@@ -381,6 +381,7 @@ public class CommunityRunner implements CliRunner {
 
     /**
      * TODO 这里有个坑,我把user的tags覆盖掉了,因为懒,只是用来跑demo.
+     *
      * @param output
      * @throws IOException
      */
@@ -407,7 +408,7 @@ public class CommunityRunner implements CliRunner {
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.attrTags = tfWdCalculator.calc(3);
+                community.attrTags = tfWdCalculator.calc(5);
                 System.out.println("[DEBUG] " + community.id + " " + community.attrTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
@@ -427,19 +428,23 @@ public class CommunityRunner implements CliRunner {
     }
 
     public void contentTags(String output) throws IOException {
-        AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
-            @Override
-            public void parseLine(String s) {
-                String[] sarr = s.split("\t");
-                if (sarr.length == 2) {
-                    FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
-                    Community community = communities.getCommByUser(sarr[0]);
-                    if (community != null) {
-                        community.users.get(sarr[0]).tags.merge(freqDist);
-                    }
-                }
-            }
-        });
+//        try {
+//            AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
+//                @Override
+//                public void parseLine(String s) {
+//                    String[] sarr = s.split("\t");
+//                    if (sarr.length == 2) {
+//                        FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+//                        Community community = communities.getCommByUser(sarr[0]);
+//                        if (community != null) {
+//                            community.users.get(sarr[0]).tags.merge(freqDist);
+//                        }
+//                    }
+//                }
+//            });
+//        } catch (Exception e) {
+//            System.err.println(e.getMessage());
+//        }
 
         if (!opts.contains(PARAM_NOCOMMTAG)) {
             System.out.println("[RUN] Calculate comm content tags and write to file.");
@@ -449,7 +454,7 @@ public class CommunityRunner implements CliRunner {
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.contentTags = tfWdCalculator.calc(3);
+                community.contentTags = tfWdCalculator.calc(5);
                 System.out.println("[DEBUG] " + community.id + " " + community.contentTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")

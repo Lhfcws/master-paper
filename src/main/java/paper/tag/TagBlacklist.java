@@ -27,6 +27,6 @@ public class TagBlacklist extends HashSet<String> {
     }
 
     private static final String[] blacks = {
-            "美食", "动漫", "电影", "音乐"
+            "美食", "动漫", "电影", "音乐", "旅游", "广州"
     };
 }
