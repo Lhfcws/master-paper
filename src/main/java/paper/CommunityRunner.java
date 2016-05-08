@@ -368,15 +368,22 @@ public class CommunityRunner implements CliRunner {
             );
 
             System.out.println("[RUN] Merge tags");
-            MergeTagSpark mergeTagSpark = new MergeTagSpark();
-            List<String> inputs = new ArrayList<>();
-            inputs.add(String.format(CONTENTTAG_FILE, theUserID));
-            inputs.add(String.format(ATTRTAG_FILE, theUserID));
-            mergeTagSpark.run(inputs, String.format(TAG_FILE, theUserID));
+            commTags(String.format(CONTENTTAG_FILE, theUserID), String.format(CONTENTTAG_FILE, theUserID));
+            commTags(String.format(ATTRTAG_FILE, theUserID), String.format(ATTRTAG_FILE, theUserID));
+//            MergeTagSpark mergeTagSpark = new MergeTagSpark();
+//            List<String> inputs = new ArrayList<>();
+//            inputs.add(String.format(CONTENTTAG_FILE, theUserID));
+//            inputs.add(String.format(ATTRTAG_FILE, theUserID));
+//            mergeTagSpark.run(inputs, String.format(TAG_FILE, theUserID));
         }
 
+        return this;
+    }
+
+    public void commTags(String input, String output) throws IOException {
         if (!opts.contains(PARAM_NOCOMMTAG)) {
-            InputStream inputStream = fs.getHDFSFileInputStream(String.format(TAG_FILE, theUserID));
+            InputStream inputStream = fs.getHDFSFileInputStream(input);
+//            InputStream inputStream = fs.getHDFSFileInputStream(String.format(TAG_FILE, theUserID));
             final Type freqDistStrType = new TypeToken<FreqDist<String>>() {
             }.getType();
 
@@ -394,9 +401,9 @@ public class CommunityRunner implements CliRunner {
             });
 
             System.out.println("[RUN] Calculate comm tags and write to file.");
-            BatchWriter batchWriter = new BatchWriter(new FileOutputStream(
-                    String.format(COMMTAG_FILE, theUserID)
-            ));
+            String outputFile = output;
+//            String outputFile = String.format(COMMTAG_FILE, theUserID);
+            BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
@@ -417,8 +424,6 @@ public class CommunityRunner implements CliRunner {
 
             batchWriter.flushNClose();
         }
-
-        return this;
     }
 
     protected CommunityRunner render() throws IOException {

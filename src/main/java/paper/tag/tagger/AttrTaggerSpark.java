@@ -70,15 +70,15 @@ public class AttrTaggerSpark implements Serializable {
                 list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(tp._2())).toString());
                 return list;
             }
-        }).saveAsTextFile(output);
+        }).saveAsTextFile(output + ".dir");
         jsc.stop();
 
-//        System.out.println("Merging file " + output);
-//        try {
-//            fs.mergeDirsToFile(output, output + ".dir");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        System.out.println("Merging file " + output);
+        try {
+            fs.mergeDirsToFile(output, output + ".dir");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("AttrTaggerSpark DONE");
     }

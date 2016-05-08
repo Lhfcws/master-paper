@@ -81,15 +81,15 @@ public class ContentTaggerSpark implements Serializable {
                 list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(freqDist)).toString());
                 return list;
             }
-        }).saveAsTextFile(output);
+        }).saveAsTextFile(output + ".dir");
         jsc.stop();
 
-//        System.out.println("Merging file " + output);
-//        try {
-//            fs.mergeDirsToFile(output, output + ".dir");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        System.out.println("Merging file " + output);
+        try {
+            fs.mergeDirsToFile(output, output + ".dir");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("ContentTaggerSpark DONE");
     }
