@@ -62,7 +62,7 @@ public class AttrTagger implements Serializable {
                     }
                 } else if (mode.get() == 2) {
                     String[] arr = s.split("\t");
-                    List<String> kws = Arrays.asList(arr[2].split("\\|"));
+                    List<String> kws = Arrays.asList(arr[1].split("\\|"));
                     areaMap.add(arr[0], kws);
                 }
             }
