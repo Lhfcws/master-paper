@@ -1,12 +1,12 @@
 package paper.tag.tagger;
 
 import com.yeezhao.commons.util.*;
+import com.yeezhao.commons.util.serialize.*;
 import paper.community.model.WeiboUser;
 import paper.tag.tagger.mapping.KeywordMapping;
 import paper.tag.tagger.mapping.RangeMapping;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -105,5 +105,22 @@ public class AttrTagger implements Serializable {
             for (String s : list)
                 dist.inc(s);
         }
+    }
+
+    /****************
+     * Test main
+     */
+    public static void main(String[] args) throws Exception {
+        InputStream in = new FileInputStream(args[0]);
+        final AttrTagger attrTagger = AttrTagger.getInstance();
+
+        AdvFile.loadFileInDelimitLine(in, new ILineParser() {
+            @Override
+            public void parseLine(String s) {
+                WeiboUser w = com.yeezhao.commons.util.serialize.GsonSerializer.deserialize(s, WeiboUser.class);
+                FreqDist<String> freq = attrTagger.tag(w);
+                System.out.println(w.id + ": " + freq);
+            }
+        });
     }
 }

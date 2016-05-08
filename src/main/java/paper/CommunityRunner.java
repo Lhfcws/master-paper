@@ -395,7 +395,7 @@ public class CommunityRunner implements CliRunner {
                         FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
                         Community community = communities.getCommByUser(sarr[0]);
                         if (community != null)
-                            community.users.get(sarr[0]).tags = freqDist;
+                            community.users.get(sarr[0]).tags.merge(freqDist);
                     }
                 }
             });
@@ -431,7 +431,7 @@ public class CommunityRunner implements CliRunner {
         // set color
         int i = 0;
         for (Community community : this.communities.getAllCommunities()) {
-            community.color = ColorBuilder.colorPool[i];
+            community.color = ColorBuilder.colorPool[i++];
         }
         System.out.println("[RUN] building graph for draw");
 
