@@ -17,7 +17,6 @@ import paper.tag.tagger.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -26,6 +25,9 @@ import java.util.*;
  * @since 16/4/10
  */
 public class CommunityRunner implements CliRunner {
+    static final Type freqDistStrType = new TypeToken<FreqDist<String>>() {
+    }.getType();
+
     // CLI PARAMS
     public static final String PARAM_CLI_UID = "uid";
     public static final String PARAM_CLI_TOPNCOMM = "topNComm";
@@ -128,6 +130,8 @@ public class CommunityRunner implements CliRunner {
         scanContent();
         tagging();
         render();
+
+        System.out.println("CommunityRunner done.");
     }
 
     /**
@@ -351,7 +355,7 @@ public class CommunityRunner implements CliRunner {
 //                System.out.println("[RUN] community tagging for community " + community.id);
 //                TfWdCalculator tfWdCalculator = new TfWdCalculator();
 //                tfWdCalculator.setWeiboUsers(community.users.values());
-//                community.commTags = tfWdCalculator.calc(topTag);
+//                community.contentTags = tfWdCalculator.calc(topTag);
 //            }
             System.out.println("[RUN] ContentTaggerSpark");
             ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
@@ -368,51 +372,89 @@ public class CommunityRunner implements CliRunner {
             );
 
             System.out.println("[RUN] Merge tags");
-            commTags(String.format(CONTENTTAG_FILE, theUserID), String.format(CONTENTTAG_FILE, theUserID));
-            commTags(String.format(ATTRTAG_FILE, theUserID), String.format(ATTRTAG_FILE, theUserID));
-//            MergeTagSpark mergeTagSpark = new MergeTagSpark();
-//            List<String> inputs = new ArrayList<>();
-//            inputs.add(String.format(CONTENTTAG_FILE, theUserID));
-//            inputs.add(String.format(ATTRTAG_FILE, theUserID));
-//            mergeTagSpark.run(inputs, String.format(TAG_FILE, theUserID));
+            contentTags(String.format(CONTENTTAG_FILE, theUserID));
+            attrTags(String.format(ATTRTAG_FILE, theUserID));
         }
 
         return this;
     }
 
-    public void commTags(String input, String output) throws IOException {
-        if (!opts.contains(PARAM_NOCOMMTAG)) {
-            InputStream inputStream = fs.getHDFSFileInputStream(input);
-//            InputStream inputStream = fs.getHDFSFileInputStream(String.format(TAG_FILE, theUserID));
-            final Type freqDistStrType = new TypeToken<FreqDist<String>>() {
-            }.getType();
-
-            AdvFile.loadFileInRawLines(inputStream, new ILineParser() {
-                @Override
-                public void parseLine(String s) {
-                    String[] sarr = s.split("\t");
-                    if (sarr.length == 2) {
-                        FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
-                        Community community = communities.getCommByUser(sarr[0]);
-                        if (community != null)
-                            community.users.get(sarr[0]).tags.merge(freqDist);
+    /**
+     * TODO 这里有个坑,我把user的tags覆盖掉了,因为懒,只是用来跑demo.
+     * @param output
+     * @throws IOException
+     */
+    public void attrTags(String output) throws IOException {
+        AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(ATTRTAG_FILE, theUserID)), new ILineParser() {
+            @Override
+            public void parseLine(String s) {
+                String[] sarr = s.split("\t");
+                if (sarr.length == 2) {
+                    FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+                    Community community = communities.getCommByUser(sarr[0]);
+                    if (community != null) {
+                        community.users.get(sarr[0]).tags = freqDist;
                     }
                 }
-            });
+            }
+        });
 
-            System.out.println("[RUN] Calculate comm tags and write to file.");
+        if (!opts.contains(PARAM_NOCOMMTAG)) {
+            System.out.println("[RUN] Calculate comm attr tags and write to file.");
             String outputFile = output;
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.commTags = tfWdCalculator.calc(3);
-                System.out.println("[DBEUG] " + community.id + " " + community.commTags);
+                community.attrTags = tfWdCalculator.calc(3);
+                System.out.println("[DEBUG] " + community.id + " " + community.attrTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
                         .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
-                List<Map.Entry<String, Double>> entries = community.commTags.sortValues(false);
+                List<Map.Entry<String, Double>> entries = community.attrTags.sortValues(false);
+                if (entries != null && !entries.isEmpty()) {
+                    for (Map.Entry<String, Double> entry : entries)
+                        sb.append(entry.getKey()).append("$");
+                    sb.setLength(sb.length() - 1);
+                }
+
+                batchWriter.writeWithCache(sb.append("\n").toString());
+            }
+
+            batchWriter.flushNClose();
+        }
+    }
+
+    public void contentTags(String output) throws IOException {
+        AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
+            @Override
+            public void parseLine(String s) {
+                String[] sarr = s.split("\t");
+                if (sarr.length == 2) {
+                    FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+                    Community community = communities.getCommByUser(sarr[0]);
+                    if (community != null) {
+                        community.users.get(sarr[0]).tags.merge(freqDist);
+                    }
+                }
+            }
+        });
+
+        if (!opts.contains(PARAM_NOCOMMTAG)) {
+            System.out.println("[RUN] Calculate comm content tags and write to file.");
+            String outputFile = output;
+//            String outputFile = String.format(COMMTAG_FILE, theUserID);
+            BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
+            for (Community community : this.communities.getAllCommunities()) {
+                TfWdCalculator tfWdCalculator = new TfWdCalculator();
+                tfWdCalculator.setWeiboUsers(community.users.values());
+                community.contentTags = tfWdCalculator.calc(3);
+                System.out.println("[DEBUG] " + community.id + " " + community.contentTags);
+
+                StringBuilder sb = new StringBuilder().append(community.id).append("\t")
+                        .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
+                List<Map.Entry<String, Double>> entries = community.contentTags.sortValues(false);
                 if (entries != null && !entries.isEmpty()) {
                     for (Map.Entry<String, Double> entry : entries)
                         sb.append(entry.getKey()).append("$");
@@ -522,6 +564,7 @@ public class CommunityRunner implements CliRunner {
             }
 
             this.run();
+            System.out.println("[RUN] DONE. Program exited.");
             System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();

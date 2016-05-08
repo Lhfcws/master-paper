@@ -43,10 +43,11 @@ public class TfWdCalculator implements Serializable {
         }
 
         DoubleDist<String> ret = new DoubleDist<>();
-        for (String tag : allTags) {
-            double score = tfDist.get(tag) * wdDist.get(tag) / (totalWeight * totalDocsSize);
-            ret.put(tag, score);
-        }
+        for (String tag : allTags)
+            if (!TagBlacklist.getInstance().contains(tag)) {
+                double score = tfDist.get(tag) * wdDist.get(tag) / (totalWeight * totalDocsSize);
+                ret.put(tag, score);
+            }
 
         return ret.topKDistByValues(false, topk);
     }

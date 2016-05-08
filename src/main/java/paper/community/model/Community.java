@@ -16,7 +16,8 @@ public class Community {
     public Color color = ColorBuilder.DEFAULT_COLOR;
     public Map<String, WeiboUser> users = new HashMap<>();
     public List<String> kols = new LinkedList<>();
-    public DoubleDist<String> commTags = new DoubleDist<>();
+    public DoubleDist<String> contentTags = new DoubleDist<>();
+    public DoubleDist<String> attrTags = new DoubleDist<>();
 
     public Community(int id) {
         this.id = id;
