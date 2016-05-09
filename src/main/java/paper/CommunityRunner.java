@@ -256,12 +256,14 @@ public class CommunityRunner implements CliRunner {
                 continue;
             }
 
-            count++;
             cmap.put(community.id, community);
             for (WeiboUser weiboUser : community.users.values())
                 rmap.put(weiboUser.id, community.id);
 
-            if (count == topNComm) break;
+            community.color = ColorBuilder.colorPool[count];
+            if (count++ == topNComm) break;
+            // set color
+
         }
         this.communities.setCommunityList(cmap);
         this.communities.setRevIndex(rmap);
@@ -475,11 +477,7 @@ public class CommunityRunner implements CliRunner {
 
     protected CommunityRunner render() throws IOException {
         System.out.println("[INFO] render");
-        // set color
-        int i = 0;
-        for (Community community : this.communities.getAllCommunities()) {
-            community.color = ColorBuilder.colorPool[i++];
-        }
+
         System.out.println("[RUN] building graph for draw");
 
         CommunityGraphDrawer drawer = new WbGraphDrawer(conf);
