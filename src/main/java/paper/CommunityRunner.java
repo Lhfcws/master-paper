@@ -167,7 +167,7 @@ public class CommunityRunner implements CliRunner {
         });
 
         final GraphFilter graphFilter = new GraphFilter();
-        userRelations = graphFilter.filter(userRelations, topNDots);
+        userRelations = graphFilter.filter(userRelations, topNDots * topNComm);
 
         // Load userinfo
         AdvFile.loadFileInDelimitLine(fs.getHDFSFileInputStream(String.format(USER_FILE, theUserID)), new ILineParser() {
