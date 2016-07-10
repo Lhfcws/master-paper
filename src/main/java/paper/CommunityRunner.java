@@ -71,7 +71,7 @@ public class CommunityRunner implements CliRunner {
     protected int topNComm = 10;
     protected int topNKol = 10;
     protected int topTag = 5;
-    protected int topNDots = 500;
+    protected int topNDots = 100;
     protected List<String> opts;
     protected String theUserID;
     protected AdvHashMap<String, WeiboUser> allUsers;
@@ -268,7 +268,7 @@ public class CommunityRunner implements CliRunner {
                 weiboUsers = weiboUsers.subList(0, topNDots);
             community.users = new HashMap<>();
             for (WeiboUser weiboUser : weiboUsers)
-            community.users.put(weiboUser.id, weiboUser);
+                community.users.put(weiboUser.id, weiboUser);
 
             cmap.put(community.id, community);
             for (WeiboUser weiboUser : community.users.values()) {
@@ -538,6 +538,8 @@ public class CommunityRunner implements CliRunner {
                     graph.get(src).add(nodeTypes.get(dest));
                 }
         }
+
+        System.out.println("Total nodes : " + nodeTypes.size());
 
         return graph;
     }
