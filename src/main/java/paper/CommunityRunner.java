@@ -8,6 +8,7 @@ import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import paper.community.*;
 import paper.community.model.*;
+import paper.community.model.util.GraphFilter;
 import paper.query.WeiboContentScanSpark;
 import paper.query.WeiboUserScanSpark;
 import paper.render.*;
@@ -152,16 +153,6 @@ public class CommunityRunner implements CliRunner {
             );
         }
 
-        // Load userinfo
-        AdvFile.loadFileInDelimitLine(fs.getHDFSFileInputStream(String.format(USER_FILE, theUserID)), new ILineParser() {
-            @Override
-            public void parseLine(String s) {
-                WeiboUser weiboUser = GsonSerializer.fromJson(s, WeiboUser.class);
-                allUsers.put(weiboUser.id, weiboUser);
-            }
-        });
-        System.out.println("[LOAD] user size: " + allUsers.size());
-
         // Load relations
         AdvFile.loadFileInDelimitLine(fs.getHDFSFileInputStream(String.format(REL_FILE, theUserID)), new ILineParser() {
             @Override
@@ -174,6 +165,21 @@ public class CommunityRunner implements CliRunner {
                 }
             }
         });
+
+        final GraphFilter graphFilter = new GraphFilter();
+        userRelations = graphFilter.filter(userRelations, topNDots);
+
+        // Load userinfo
+        AdvFile.loadFileInDelimitLine(fs.getHDFSFileInputStream(String.format(USER_FILE, theUserID)), new ILineParser() {
+            @Override
+            public void parseLine(String s) {
+                WeiboUser weiboUser = GsonSerializer.fromJson(s, WeiboUser.class);
+                if (graphFilter.existUsers.contains(weiboUser.id))
+                    allUsers.put(weiboUser.id, weiboUser);
+            }
+        });
+
+        System.out.println("[LOAD] user size: " + allUsers.size());
         System.out.println("[LOAD] Load userRelations : " + userRelations.values().size());
 
         return this;
