@@ -68,7 +68,7 @@ public class CommunityRunner implements CliRunner {
 
     // MEMBERs
     protected Communities communities;
-    protected int topNComm = 10;
+    protected int topNComm = 20;
     protected int topNKol = 10;
     protected int topTag = 5;
     protected int topNDots = 1000;
@@ -547,6 +547,7 @@ public class CommunityRunner implements CliRunner {
             Community community = this.communities.getCommByUser(nodeType.getId());
             double d = community.getUserWeight(nodeType.getId()) / nodeTypes.size();
             int w = ((int) d * 20) + 1;
+            if (w > 21) w = 21;
             nodeType.setSize(w);
         }
 

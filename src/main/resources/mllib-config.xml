@@ -75,6 +75,6 @@
     </property>
     <property>
         <name>fa2c.community.repulsion</name>
-        <value>1</value>
+        <value>10</value>
     </property>
 </configuration>
