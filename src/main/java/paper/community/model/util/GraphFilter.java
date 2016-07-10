@@ -16,6 +16,7 @@ public class GraphFilter {
         FreqDist<String> weights = new FreqDist<>();
 
         for (Map.Entry<String, List<String>> entry : userRelations.entrySet()) {
+            weights.inc(entry.getKey());
             for (String followee : entry.getValue()) {
                 weights.inc(followee);
             }
