@@ -270,11 +270,12 @@ public class CommunityRunner implements CliRunner {
                     return o2.weight.compareTo(o1.weight);
                 }
             });
-            if (weiboUsers.size() > topNDots)
+            if (weiboUsers.size() > topNDots) {
                 weiboUsers = weiboUsers.subList(0, topNDots);
-            community.users = new HashMap<>();
-            for (WeiboUser weiboUser : weiboUsers)
-                community.users.put(weiboUser.id, weiboUser);
+                community.users = new HashMap<>();
+                for (WeiboUser weiboUser : weiboUsers)
+                    community.users.put(weiboUser.id, weiboUser);
+            }
 
             cmap.put(community.id, community);
             for (WeiboUser weiboUser : community.users.values()) {
