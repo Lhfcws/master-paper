@@ -16,4 +16,13 @@ public class AdvListHashMap<T> extends AdvHashMap<String, List<T>> {
         this.get(key).add(value);
         return this;
     }
+
+    public int totalSize() {
+        int sum = 0;
+        for (List<T> list : values())
+            sum += list.size();
+        return sum;
+    }
 }
+
+

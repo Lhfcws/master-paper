@@ -180,7 +180,7 @@ public class CommunityRunner implements CliRunner {
         });
 
         System.out.println("[LOAD] user size: " + allUsers.size());
-        System.out.println("[LOAD] Load userRelations : " + userRelations.values().size());
+        System.out.println("[LOAD] Load userRelations : " + userRelations.totalSize());
 
         return this;
     }
