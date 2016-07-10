@@ -515,11 +515,11 @@ public class CommunityRunner implements CliRunner {
                 Community community = this.communities.getCommByUser(entry.getKey());
                 if (community == null) continue;
 
+                float w = (float) community.getUserWeight(entry.getKey());
                 nodeTypes.put(entry.getKey(), new NodeType(
                         entry.getKey(),
                         community.color,
                         1
-//                        (float) community.getUserWeight(entry.getKey())
                 ));
             }
             NodeType src = nodeTypes.get(entry.getKey());
@@ -541,6 +541,13 @@ public class CommunityRunner implements CliRunner {
                     graph.get(src).add(nodeTypes.get(dest));
                     edge++;
                 }
+        }
+
+        for (NodeType nodeType : nodeTypes.values()) {
+            Community community = this.communities.getCommByUser(nodeType.getId());
+            double d = community.getUserWeight(nodeType.getId()) / nodeTypes.size();
+            int w = ((int) d * 20) + 1;
+            nodeType.setSize(w);
         }
 
         System.out.println("Total nodes : " + nodeTypes.size() + ", total edges: " + edge);
