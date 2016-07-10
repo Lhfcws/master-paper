@@ -37,9 +37,11 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
         Map<NodeType, List<NodeType>> links = (Map<NodeType, List<NodeType>>) inputGraph;
 
         String community = null;
+        int edges = 0;
         for (Map.Entry<NodeType, List<NodeType>> entry : links.entrySet()) {
             Node source = this.getNodeOrNew(entry.getKey());
             for (NodeType targetID : entry.getValue()) {
+                edges++;
                 Node target = this.getNodeOrNew(targetID);
 
                 Edge edge = this.graphModel.factory().newEdge(source, target);
@@ -56,6 +58,7 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
                     this.undirectedGraph.addEdge(edge);
             }
         }
+        System.out.println("Total links : " + edges);
     }
 
     public static void main(String[] args) throws Exception {

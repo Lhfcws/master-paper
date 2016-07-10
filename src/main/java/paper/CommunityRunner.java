@@ -542,6 +542,7 @@ public class CommunityRunner implements CliRunner {
         }
 
         System.out.println("Total nodes : " + nodeTypes.size() + ", total edges: " + edge);
+        System.out.println("Graph size: " + graph.size());
 
         return graph;
     }
