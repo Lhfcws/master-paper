@@ -51,11 +51,13 @@ public class MLLibConfiguration extends AbstractCommConfiguration implements Ser
 
     @Override
     protected void init(Configuration configuration) {
+        this.set( CommConsts.SPARK_MASTER_URL, "spark://hadoop1:7077,rocket16:7077");
+        this.set( CommConsts.ES_HOSTS, "hadoop1,hadoop2,hadoop3,hadoop4,hadoop5,hadoop14,hadoop15,hadoop18");
         this.addResource("mllib-config.xml");
     }
 
     @Override
     protected void fastLoadConfigs() throws Exception {
-        ConfigUtil.fastLoadConfig(this, CommConsts.ORG, CommConsts.APP, confParams, new String[] {});
+//        ConfigUtil.fastLoadConfig(this, CommConsts.ORG, CommConsts.APP, confParams, new String[] {});
     }
 }
