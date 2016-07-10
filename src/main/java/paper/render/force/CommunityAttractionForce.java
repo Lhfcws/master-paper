@@ -1,4 +1,4 @@
-package paper.render.forceatlas2c;
+package paper.render.force;
 
 import org.gephi.graph.api.Node;
 import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2LayoutData;
@@ -7,7 +7,7 @@ import org.gephi.layout.plugin.forceAtlas2.ForceFactory;
 /**
  * compute repulsion force with community
  *
- * @author liukang
+ * @author lhfcws
  * @since 2016/1/13
  */
 public class CommunityAttractionForce extends ForceFactory.AttractionForce {

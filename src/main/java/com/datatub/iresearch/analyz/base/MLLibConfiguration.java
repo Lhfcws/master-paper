@@ -53,6 +53,6 @@ public class MLLibConfiguration extends AbstractCommConfiguration {
 
     @Override
     protected void fastLoadConfigs() throws Exception {
-        ConfigUtil.fastLoadConfig(this, CommConsts.ORG, CommConsts.APP, confParams, new String[] {});
+//        ConfigUtil.fastLoadConfig(this, CommConsts.ORG, CommConsts.APP, confParams, new String[] {});
     }
 }

@@ -14,6 +14,7 @@ import paper.render.*;
 import paper.tag.TfWdCalculator;
 import paper.tag.tagger.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -483,8 +484,10 @@ public class CommunityRunner implements CliRunner {
         CommunityGraphDrawer drawer = new WbGraphDrawer(conf);
         drawer.buildGraph(this.buildGraph());
 
+        drawer.startLayout();
         System.out.println("[RUN] rendering into gexf");
         drawer.export(String.format(GEXF_FILE, theUserID));
+        drawer.stopLayout();
         return this;
     }
 
@@ -551,6 +554,8 @@ public class CommunityRunner implements CliRunner {
 
     @Override
     public void start(CommandLine cmdl) {
+        new File(ROOT).mkdirs();
+
         this.theUserID = cmdl.getOptionValue(PARAM_CLI_UID);
         if (cmdl.hasOption(PARAM_CLI_TOPNCOMM))
             this.topNComm = Integer.valueOf(cmdl.getOptionValue(PARAM_CLI_TOPNCOMM));

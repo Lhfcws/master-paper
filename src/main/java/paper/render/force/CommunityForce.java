@@ -39,7 +39,7 @@
 
  Portions Copyrighted 2011 Gephi Consortium.
  */
-package paper.render.forceatlas2c;
+package paper.render.force;
 
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.Graph;
@@ -63,10 +63,10 @@ import java.util.concurrent.Future;
 /**
  * ForceAtlas 2 Layout, manages each step of the computations.
  *
- * @author liukang
+ * @author lhfcws
  * @since 2016/1/12
  */
-public class ForceAtlas2c extends ForceAtlas2{
+public class CommunityForce extends ForceAtlas2{
 
     private GraphModel graphModel;
     private Graph graph;
@@ -91,7 +91,7 @@ public class ForceAtlas2c extends ForceAtlas2{
     double outboundAttCompensation = 1;
     private ExecutorService pool;
 
-    public ForceAtlas2c(ForceAtlas2Builder layoutBuilder) {
+    public CommunityForce(ForceAtlas2Builder layoutBuilder) {
         super(layoutBuilder);
         this.layoutBuilder = layoutBuilder;
         this.threadCount = Math.min(4, Math.max(1, Runtime.getRuntime().availableProcessors() - 1));

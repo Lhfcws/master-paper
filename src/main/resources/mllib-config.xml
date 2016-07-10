@@ -68,7 +68,7 @@
         <name>snt.accurate.model</name>
         <value>${snt.model.path}/snt/snt.accurate.model</value>
     </property>
-    <!-- ForceAtlas2c -->
+    <!-- CommunityForce -->
     <property>
         <name>fa2c.community.attraction</name>
         <value>100</value>

@@ -13,11 +13,12 @@ import java.util.Map;
  */
 public class RubbishCommunityRecognizer {
     protected static int PREFIX = 3;
+    protected static int TOO_SMALL_SIZE = 10;
 
     public boolean isRubbish(Community community) {
         FreqDist<String> freqDist = new FreqDist<>();
 
-        if (CollectionUtil.isEmpty(community.kols))
+        if (CollectionUtil.isEmpty(community.kols) || community.users.size() < TOO_SMALL_SIZE)
             return true;
 
         int size = community.kols.size();

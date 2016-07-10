@@ -1,6 +1,5 @@
 package paper.render;
 
-import paper.MLLibConfiguration;
 import com.yeezhao.commons.util.FileSystemHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -19,7 +18,7 @@ import org.gephi.layout.spi.Layout;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.openide.util.Lookup;
-import paper.render.forceatlas2c.ForceAtlas2c;
+import paper.render.force.CommunityForce;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -138,8 +137,8 @@ public abstract class CommunityGraphDrawer {
         return layout;
     }
 
-    protected ForceAtlas2c buildForceAtlas2cLayout() {
-        ForceAtlas2c layout = new ForceAtlas2c(new ForceAtlas2Builder());
+    protected CommunityForce buildForceAtlas2cLayout() {
+        CommunityForce layout = new CommunityForce(new ForceAtlas2Builder());
 //        layout.setEdgeWeightInfluence(0.0);
         layout.setBarnesHutOptimize(true);
         layout.setJitterTolerance(1.0);

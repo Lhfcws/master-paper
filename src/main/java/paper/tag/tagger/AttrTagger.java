@@ -1,7 +1,6 @@
 package paper.tag.tagger;
 
 import com.yeezhao.commons.util.*;
-import com.yeezhao.commons.util.serialize.*;
 import paper.community.model.WeiboUser;
 import paper.tag.tagger.mapping.KeywordMapping;
 import paper.tag.tagger.mapping.RangeMapping;
@@ -11,7 +10,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -19,8 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 16/4/10
  */
 public class AttrTagger implements Serializable {
-    RangeMapping ageMap = new RangeMapping();
-    KeywordMapping areaMap = new KeywordMapping();
+    RangeMapping ageRule = new RangeMapping();
+    KeywordMapping areaRule = new KeywordMapping();
 
     // ============= SINGLETON ==========
 
@@ -56,36 +54,44 @@ public class AttrTagger implements Serializable {
                 else if (mode.get() == 1) {
                     String[] arr = s.split("\t");
                     try {
-                        ageMap.add(arr[0], arr[1]);
+                        ageRule.add(arr[0], arr[1]);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else if (mode.get() == 2) {
                     String[] arr = s.split("\t");
                     List<String> kws = Arrays.asList(arr[1].split("\\|"));
-                    areaMap.add(arr[0], kws);
+                    areaRule.add(arr[0], kws);
                 }
             }
         });
     }
 
-    public FreqDist<String> tag(WeiboUser wu) {
-        FreqDist<String> d = new FreqDist<>();
+    /**
+     * 属性标签抽取函数
+     * @param weiboUser
+     * @return
+     */
+    public FreqDist<String> tag(WeiboUser weiboUser) {
+        FreqDist<String> tagDistribution = new FreqDist<>();
 
-        incTag(d, wu.area);
-        incTag(d, wu.city);
-        incList(d, wu.school);
-        incList(d, wu.company);
+        // 直接统计
+        incTag(tagDistribution, weiboUser.area);
+        incTag(tagDistribution, weiboUser.city);
+        incList(tagDistribution, weiboUser.school);
+        incList(tagDistribution, weiboUser.company);
 
+        // RangeRule 年龄映射
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        if (wu.birthYear != null)
-            d.merge(ageMap.map(year - wu.birthYear));
+        if (weiboUser.birthYear != null)
+            tagDistribution.merge(ageRule.map(year - weiboUser.birthYear));
 
-        if (wu.area != null) {
-            d.merge(areaMap.map(wu.area));
+        // MappingRule 地域映射
+        if (weiboUser.area != null) {
+            tagDistribution.merge(areaRule.map(weiboUser.area));
         }
 
-        return d;
+        return tagDistribution;
     }
 
     public FreqDist<String> tag(Collection<WeiboUser> wus) {
