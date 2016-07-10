@@ -538,18 +538,14 @@ public class CommunityRunner implements CliRunner {
                         ));
                     }
                     graph.setDefault(src, new LinkedList<NodeType>());
-                    graph.get(src).add(nodeTypes.get(dest));
+                    NodeType dn = nodeTypes.get(dest);
+                    graph.get(src).add(dn);
+                    src.setSize(src.getSize() + 1);
+                    dn.setSize(dn.getSize() + 1);
                     edge++;
                 }
         }
 
-        for (NodeType nodeType : nodeTypes.values()) {
-            Community community = this.communities.getCommByUser(nodeType.getId());
-            double d = community.getUserWeight(nodeType.getId()) / nodeTypes.size();
-            int w = ((int) d * 20) + 1;
-            if (w > 21) w = 21;
-            nodeType.setSize(w);
-        }
 
         System.out.println("Total nodes : " + nodeTypes.size() + ", total edges: " + edge);
         System.out.println("Graph size: " + graph.size());
