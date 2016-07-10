@@ -70,8 +70,8 @@ public class CommunityRunner implements CliRunner {
     protected Communities communities;
     protected int topNComm = 20;
     protected int topNKol = 10;
-    protected int topTag = 3;
-    protected int topNDots = 1000;
+    protected int topTag = 5;
+    protected int topNDots = 500;
     protected List<String> opts;
     protected String theUserID;
     protected AdvHashMap<String, WeiboUser> allUsers;
@@ -257,9 +257,23 @@ public class CommunityRunner implements CliRunner {
                 continue;
             }
 
+            List<WeiboUser> weiboUsers = new ArrayList<>(community.users.values());
+            Collections.sort(weiboUsers, new Comparator<WeiboUser>() {
+                @Override
+                public int compare(WeiboUser o1, WeiboUser o2) {
+                    return o2.weight.compareTo(o1.weight);
+                }
+            });
+            if (weiboUsers.size() > topNDots)
+                weiboUsers = weiboUsers.subList(0, topNDots);
+            community.users = new HashMap<>();
+            for (WeiboUser weiboUser : weiboUsers)
+            community.users.put(weiboUser.id, weiboUser);
+
             cmap.put(community.id, community);
-            for (WeiboUser weiboUser : community.users.values())
+            for (WeiboUser weiboUser : community.users.values()) {
                 rmap.put(weiboUser.id, community.id);
+            }
 
             community.color = ColorBuilder.colorPool[count];
             if (count++ == topNComm) break;
