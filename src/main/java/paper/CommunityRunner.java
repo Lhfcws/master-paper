@@ -508,6 +508,7 @@ public class CommunityRunner implements CliRunner {
     protected Map<NodeType, List<NodeType>> buildGraph() {
         AdvHashMap<NodeType, List<NodeType>> graph = new AdvHashMap<>();
         AdvHashMap<String, NodeType> nodeTypes = new AdvHashMap<>();
+        int edge = 0;
 
         for (Map.Entry<String, List<String>> entry : userRelations.entrySet()) {
             if (nodeTypes.get(entry.getKey()) == null) {
@@ -536,10 +537,11 @@ public class CommunityRunner implements CliRunner {
                     }
                     graph.setDefault(src, new LinkedList<NodeType>());
                     graph.get(src).add(nodeTypes.get(dest));
+                    edge++;
                 }
         }
 
-        System.out.println("Total nodes : " + nodeTypes.size());
+        System.out.println("Total nodes : " + nodeTypes.size() + ", total edges: " + edge);
 
         return graph;
     }
