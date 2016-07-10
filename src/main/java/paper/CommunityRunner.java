@@ -71,7 +71,7 @@ public class CommunityRunner implements CliRunner {
     protected int topNComm = 10;
     protected int topNKol = 10;
     protected int topTag = 5;
-    protected int topNDots = 100;
+    protected int topNDots = 1000;
     protected List<String> opts;
     protected String theUserID;
     protected AdvHashMap<String, WeiboUser> allUsers;
@@ -250,7 +250,7 @@ public class CommunityRunner implements CliRunner {
             Community community = list.get(i);
             // lookup kols
             kolLookup.lookup(community, topNKol);
-            System.out.println("[INFO] Looked up " + community.id + " kol size: " + community.kols.size());
+            System.out.println("[INFO] Looked up " + community.id + " kol size: " + community.kols.size() + ",  " + community.kols);
             // filter rubbish community
             if (rubbishCommunityRecognizer.isRubbish(community)) {
                 System.out.println("[RUBBISH] " + community.id + ", kols: " + community.kols);
@@ -518,7 +518,8 @@ public class CommunityRunner implements CliRunner {
                 nodeTypes.put(entry.getKey(), new NodeType(
                         entry.getKey(),
                         community.color,
-                        (float) community.getUserWeight(entry.getKey())
+                        1
+//                        (float) community.getUserWeight(entry.getKey())
                 ));
             }
             NodeType src = nodeTypes.get(entry.getKey());
@@ -532,7 +533,8 @@ public class CommunityRunner implements CliRunner {
                         nodeTypes.put(dest, new NodeType(
                                 dest,
                                 community.color,
-                                (float) community.getUserWeight(dest)
+                                1
+//                                (float) community.getUserWeight(dest)
                         ));
                     }
                     graph.setDefault(src, new LinkedList<NodeType>());
