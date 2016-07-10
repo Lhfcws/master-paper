@@ -68,10 +68,10 @@ public class CommunityRunner implements CliRunner {
 
     // MEMBERs
     protected Communities communities;
-    protected int topNComm = 20;
+    protected int topNComm = 15;
     protected int topNKol = 10;
     protected int topTag = 5;
-    protected int topNDots = 1000;
+    protected int topNDots = 800;
     protected List<String> opts;
     protected String theUserID;
     protected AdvHashMap<String, WeiboUser> allUsers;
