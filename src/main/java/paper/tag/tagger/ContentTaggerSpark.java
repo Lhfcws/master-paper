@@ -55,7 +55,7 @@ public class ContentTaggerSpark implements Serializable {
 
                 if (sarr.length == 2) {
                     String uid = sarr[0];
-                    ContentTagger tagger = ContentTagger.getInstance();
+                    SimpleContentTagger tagger = SimpleContentTagger.getInstance();
                     FreqDist<String> tags = tagger.tag(sarr[1]);
                     if (tags != null)
                         tagDist.merge(tags);
