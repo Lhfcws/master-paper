@@ -113,7 +113,7 @@ public class ContentTaggerSpark implements Serializable {
 
         private Taggers() {
             taggerList = Arrays.asList(new Tagger[]{
-                    ContentTagger.getInstance()
+                    SimpleContentTagger.getInstance()
             });
         }
 

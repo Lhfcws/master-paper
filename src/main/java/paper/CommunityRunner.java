@@ -384,11 +384,11 @@ public class CommunityRunner implements CliRunner {
 //                community.contentTags = tfWdCalculator.calc(topTag);
 //            }
             System.out.println("[RUN] ContentTaggerSpark");
-//            ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
-//            contentTaggerSpark.run(
-//                    String.format(CONTENT_FILE, theUserID),
-//                    String.format(CONTENTTAG_FILE, theUserID)
-//            );
+            ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
+            contentTaggerSpark.run(
+                    String.format(CONTENT_FILE, theUserID),
+                    String.format(CONTENTTAG_FILE, theUserID)
+            );
 
             System.out.println("[RUN] AttrTaggerSpark");
             AttrTaggerSpark attrTaggerSpark = new AttrTaggerSpark();
