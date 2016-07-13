@@ -36,8 +36,11 @@ public class CommunityRepulsionForce extends ForceFactory.RepulsionForce {
             double factor = coefficient * n1Layout.mass * n2Layout.mass / distance / distance;
             if (n1.getNodeData().getAttributes().getValue("community") == n2.getNodeData().getAttributes().getValue("community"))
                 factor /= communityRepulsion;
-            else
-                factor *= communityRepulsion;
+            else {
+                double d = Math.log(distance);
+                if (d < 1) d = 1;
+                factor *= communityRepulsion * d;
+            }
 
             n1Layout.dx += xDist * factor;
             n1Layout.dy += yDist * factor;

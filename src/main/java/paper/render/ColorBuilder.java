@@ -79,39 +79,39 @@ public class ColorBuilder {
             new Color(0x89, 0x45, 0x85),  //  light eggplant
             new Color(0x7f, 0x51, 0x12),  //  medium brown
             new Color(0x69, 0x61, 0x12),  //  greenish brown
+            new Color(0x06, 0xc2, 0xac),  //  turquoise
+            new Color(0xef, 0xb4, 0x35),  //  macaroni and cheese
             new Color(0x01, 0x73, 0x74),  //  deep turquoise
             new Color(0x22, 0x42, 0xc7),  //  blue blue
             new Color(0xac, 0xc2, 0xd9),  //  cloudy blue
             new Color(0xff, 0x6f, 0x52),  //  orange pink
+            new Color(0xdd, 0x85, 0xd7),  //  lavender pink
             new Color(0x4e, 0x05, 0x50),  //  plum purple
-            new Color(0x04, 0x2e, 0x60),  //  marine
-            new Color(0x3c, 0x41, 0x42),  //  charcoal grey
-            new Color(0xff, 0xfa, 0x86),  //  manilla
-            new Color(0xa5, 0xa3, 0x91),  //  cement
+            new Color(0xaf, 0xa8, 0x8b),  //  bland
             new Color(0x05, 0xff, 0xa6),  //  bright sea green
             new Color(0xff, 0x07, 0x89),  //  strong pink
             new Color(0x01, 0x46, 0x00),  //  racing green
+            new Color(0xff, 0xfa, 0x86),  //  manilla
             new Color(0xd4, 0xff, 0xff),  //  really light blue
             new Color(0x65, 0xab, 0x7c),  //  tea
             new Color(0x95, 0x2e, 0x8f),  //  warm purple
             new Color(0x4e, 0x51, 0x8b),  //  twilight
             new Color(0x56, 0xae, 0x57),  //  dark pastel green
-            new Color(0xef, 0xb4, 0x35),  //  macaroni and cheese
             new Color(0xd9, 0x9b, 0x82),  //  pinkish tan
             new Color(0x0c, 0x06, 0xf7),  //  strong blue
-            new Color(0x06, 0xc2, 0xac),  //  turquoise
             new Color(0x61, 0xde, 0x2a),  //  toxic green
+            new Color(0xa5, 0xa3, 0x91),  //  cement
             new Color(0x37, 0x78, 0xbf),  //  windows blue
             new Color(0xa5, 0x5a, 0xf4),  //  lighter purple
             new Color(0x9b, 0xb5, 0x3c),  //  booger
+            new Color(0x04, 0x2e, 0x60),  //  marine
             new Color(0xfc, 0xfc, 0x81),  //  yellowish tan
             new Color(0x1f, 0x63, 0x57),  //  dark green blue
             new Color(0x0c, 0xb5, 0x77),  //  green teal
-            new Color(0xaf, 0xa8, 0x8b),  //  bland
             new Color(0x08, 0x78, 0x7f),  //  deep aqua
-            new Color(0xdd, 0x85, 0xd7),  //  lavender pink
             new Color(0xa6, 0xc8, 0x75),  //  light moss green
             new Color(0xa7, 0xff, 0xb5),  //  light seafoam green
+            new Color(0x3c, 0x41, 0x42),  //  charcoal grey
             new Color(0xc2, 0xb7, 0x09),  //  olive yellow
             new Color(0xff, 0x63, 0xe9),  //  candy pink
             new Color(0x96, 0x6e, 0xbd),  //  deep lilac

@@ -3,6 +3,7 @@ package paper.render;
 import com.datatub.iresearch.analyz.base.MLLibConfiguration;
 import com.google.common.reflect.TypeToken;
 import com.yeezhao.commons.util.AdvFile;
+import com.yeezhao.commons.util.FreqDist;
 import com.yeezhao.commons.util.ILineParser;
 import com.yeezhao.commons.util.StringUtil;
 import com.yeezhao.commons.util.serialize.GsonSerializer;
@@ -10,24 +11,21 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.Node;
+import paper.community.model.Community;
 import paper.community.model.util.GraphBuilder;
+import paper.community.model.util.GraphFilter;
 import paper.community.model.util.IntMap;
 
 import java.awt.*;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author lhfcws
  * @since 16/4/10
  */
 public class WbGraphDrawer extends CommunityGraphDrawer {
-    private static final int SHOW_COMMUNITY_NUM = 50;
-
     public WbGraphDrawer(Configuration conf) {
         super(conf);
     }
@@ -36,7 +34,6 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
     public void buildGraph(Object inputGraph) {
         Map<NodeType, List<NodeType>> links = (Map<NodeType, List<NodeType>>) inputGraph;
 
-        String community = null;
         int edges = 0;
         for (Map.Entry<NodeType, List<NodeType>> entry : links.entrySet()) {
             Node source = this.getNodeOrNew(entry.getKey());
@@ -62,6 +59,7 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
     }
 
     public static void main(String[] args) throws Exception {
+        int topNComm = 20;
         String clusterFN = "community_1945133444_clusters.txt";
         String relFN = "community_1945133444_relations.txt";
 
@@ -70,35 +68,56 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
         InputStream relIn = conf.getConfResourceAsInputStream(relFN);
 
         String json = IOUtils.toString(clusterIn);
-        Map<String, Integer> clusters = GsonSerializer.deserialize(json, new TypeToken<Map<String, Integer>>() {
+        final Map<String, Integer> clusters = GsonSerializer.deserialize(json, new TypeToken<Map<String, Integer>>() {
         }.getType());
+
+        // trunccommunity
+        FreqDist<Integer> counter = new FreqDist<>();
+        for (Map.Entry<String, Integer> e : clusters.entrySet())
+            counter.inc(e.getValue());
+        List<Map.Entry<Integer, Integer>> sortList = counter.sortValues(false);
+        if (sortList.size() > topNComm)
+            sortList = sortList.subList(0, topNComm);
+        counter.clear();
+        for (Map.Entry<Integer, Integer> e : sortList)
+            counter.put(e.getKey(), e.getValue());
+
+        Set<Map.Entry<String, Integer>> clustersSet = new HashSet<>(clusters.entrySet());
+        for (Map.Entry<String, Integer> e : clustersSet) {
+            if (!counter.containsKey(e.getValue()))
+                clusters.remove(e.getKey());
+        }
+
+
+        GraphFilter graphFilter = new GraphFilter();
         final GraphBuilder graphBuilder = new GraphBuilder();
-        final AtomicInteger limit = new AtomicInteger(0);
         AdvFile.loadFileInRawLines(relIn, new ILineParser() {
             @Override
             public void parseLine(String s) {
-                limit.incrementAndGet();
-                if (limit.get() > 5000) return;
                 String[] arr = s.trim().split("\t");
-                if (arr.length > 1) {
+                String src = arr[0];
+                if (clusters.containsKey(src) && arr.length > 1) {
                     String[] ts = arr[1].split(StringUtil.STR_DELIMIT_1ST);
                     for (String t : ts) {
-                        graphBuilder.link(arr[0], t);
+                        if (clusters.containsKey(t))
+                            graphBuilder.link(src, t);
                     }
                 }
             }
         });
 
-        System.out.println("Total nodes: " + graphBuilder.getWare().size());
+        Map<NodeType, List<NodeType>> graph = graphFilter.filter(graphBuilder.getGraph(), topNComm * 1000);
+        System.out.println("Total nodes: " + graphFilter.size());
 
-        Set<Integer> set = new HashSet<>(clusters.values());
-        List<Color> colorList = ColorBuilder.generateGapColors(set.size());
+        Set<Integer> clusterValueSet = new HashSet<>(clusters.values());
+        List<Color> colorList = ColorBuilder.generateGapColors(clusterValueSet.size());
         IntMap intMap = new IntMap();
-        for (int cid : set)
+        for (int cid : clusterValueSet)
             intMap.get(cid);
 
-        for (NodeType nodeType : graphBuilder.getWare().values()) {
-            nodeType.communityID = clusters.get(nodeType.getId());
+        for (String uid : graphFilter.existUsers) {
+            NodeType nodeType = graphBuilder.getWare().get(uid);
+            nodeType.communityID = clusters.get(uid);
             nodeType.setColor(
                     colorList.get(
                             intMap.get(nodeType.communityID)
@@ -106,15 +125,30 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
             );
         }
 
-        int a = conf.getInt("fa2c.community.attraction", 100);
+        int[] as = new int[] {1,};
+        int[] rs = new int[] {1, };
+
+        int a = conf.getInt("fa2c.community.attraction", 50);
         int r = conf.getInt("fa2c.community.repulsion", 1);
 
-        WbGraphDrawer drawer = new WbGraphDrawer(conf);
-        drawer.buildGraph(graphBuilder.getGraph());
-        drawer.startLayout();
-        drawer.export("/Users/lhfcws/coding/workspace/branches/lhfcws-paper1/src/main/resources/layout-" + a + "-" + r + ".gexf");
-        System.out.println("Export done.");
-        drawer.stopLayout();
+        for (int i : as) {
+            a = i;
+            for (int j : rs) {
+                r = j;
+
+                Configuration configuration = new Configuration(conf);
+                configuration.setInt("fa2c.community.attraction", a);
+                configuration.setInt("fa2c.community.repulsion", r);
+
+                System.out.println("Attraction: " + a + ", Repulsion: " + r);
+                WbGraphDrawer drawer = new WbGraphDrawer(configuration);
+                drawer.buildGraph(graph);
+                drawer.startLayout();
+                drawer.export("/Users/lhfcws/coding/workspace/branches/lhfcws-paper1/src/main/resources/layout-" + a + "-" + r + ".gexf");
+                System.out.println("Export done.");
+                drawer.stopLayout();
+            }
+        }
         System.exit(0);
     }
 }

@@ -69,7 +69,7 @@ public class CommunityRunner implements CliRunner {
 
     // MEMBERs
     protected Communities communities;
-    protected int topNComm = 15;
+    protected int topNComm = 20;
     protected int topNKol = 10;
     protected int topTag = 5;
     protected int topNDots = 800;
@@ -174,8 +174,10 @@ public class CommunityRunner implements CliRunner {
             @Override
             public void parseLine(String s) {
                 WeiboUser weiboUser = GsonSerializer.fromJson(s, WeiboUser.class);
-                if (graphFilter.existUsers.contains(weiboUser.id))
+                if (graphFilter.existUsers.contains(weiboUser.id)) {
+                    weiboUser.weight = 1.0 * graphFilter.weights.get(weiboUser.id);
                     allUsers.put(weiboUser.id, weiboUser);
+                }
             }
         });
 
@@ -282,9 +284,9 @@ public class CommunityRunner implements CliRunner {
                 rmap.put(weiboUser.id, community.id);
             }
 
+            // set color
             community.color = ColorBuilder.colorPool[count];
             if (count++ == topNComm) break;
-            // set color
 
         }
         this.communities.setCommunityList(cmap);
@@ -526,7 +528,7 @@ public class CommunityRunner implements CliRunner {
                 nodeTypes.put(entry.getKey(), new NodeType(
                         entry.getKey(),
                         community.color,
-                        1
+                        w
                 ));
             }
             NodeType src = nodeTypes.get(entry.getKey());
@@ -540,15 +542,15 @@ public class CommunityRunner implements CliRunner {
                         nodeTypes.put(dest, new NodeType(
                                 dest,
                                 community.color,
-                                1
-//                                (float) community.getUserWeight(dest)
+//                                1
+                                (float) community.getUserWeight(dest)
                         ));
                     }
                     graph.setDefault(src, new LinkedList<NodeType>());
                     NodeType dn = nodeTypes.get(dest);
                     graph.get(src).add(dn);
-                    src.setSize(src.getSize() + 1);
-                    dn.setSize(dn.getSize() + 1);
+//                    src.setSize(src.getSize() + 1);
+//                    dn.setSize(dn.getSize() + 1);
                     edge++;
                 }
         }
