@@ -454,28 +454,30 @@ public class CommunityRunner implements CliRunner {
     }
 
     public void contentTags(String output) throws IOException {
-//        try {
-//            AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
-//                @Override
-//                public void parseLine(String s) {
-//                    String[] sarr = s.split("\t");
-//                    if (sarr.length == 2) {
-//                        FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
-//                        Community community = communities.getCommByUser(sarr[0]);
-//                        if (community != null) {
-//                            community.users.get(sarr[0]).tags.merge(freqDist);
-//                        }
-//                    }
-//                }
-//            });
-//        } catch (Exception e) {
-//            System.err.println(e.getMessage());
-//        }
-
         if (!opts.contains(PARAM_NOCOMMTAG)) {
+
             System.out.println("[RUN] Calculate comm content tags and write to file.");
             String outputFile = output;
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
+
+            try {
+                AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
+                    @Override
+                    public void parseLine(String s) {
+                        String[] sarr = s.split("\t");
+                        if (sarr.length == 2) {
+                            FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+                            Community community = communities.getCommByUser(sarr[0]);
+                            if (community != null) {
+                                community.users.get(sarr[0]).tags.merge(freqDist);
+                            }
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
