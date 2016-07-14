@@ -2,6 +2,7 @@ package paper;
 
 import com.google.common.reflect.TypeToken;
 import com.yeezhao.commons.util.*;
+import com.yeezhao.commons.util.serialize.GsonSerializer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -367,22 +368,6 @@ public class CommunityRunner implements CliRunner {
         System.out.println("[INFO] tagging");
 
         if (!opts.contains(PARAM_NOTAG)) {
-//            for (Community community : communities.getAllCommunities()) {
-//                System.out.println("[RUN] user tagging for community " + community.id);
-//                for (WeiboUser user : community.users.values()) {
-//                    if (userContent.containsKey(user.id)) {
-//                        for (Tagger tagger : taggers) {
-//                            FreqDist<String> userTags = tagger.tag(userContent.get(user.id));
-//                            user.tags.merge(userTags);
-//                        }
-//                    }
-//                }
-//
-//                System.out.println("[RUN] community tagging for community " + community.id);
-//                TfWdCalculator tfWdCalculator = new TfWdCalculator();
-//                tfWdCalculator.setWeiboUsers(community.users.values());
-//                community.contentTags = tfWdCalculator.calc(topTag);
-//            }
             System.out.println("[RUN] ContentTaggerSpark");
             ContentTaggerSpark contentTaggerSpark = new ContentTaggerSpark();
             contentTaggerSpark.run(
@@ -418,7 +403,7 @@ public class CommunityRunner implements CliRunner {
             public void parseLine(String s) {
                 String[] sarr = s.split("\t");
                 if (sarr.length == 2) {
-                    FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+                    FreqDist<String> freqDist = GsonSerializer.deserialize(sarr[1], freqDistStrType);
                     Community community = communities.getCommByUser(sarr[0]);
                     if (community != null) {
                         community.users.get(sarr[0]).tags = freqDist;
@@ -462,19 +447,23 @@ public class CommunityRunner implements CliRunner {
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
 
             try {
+//                for (Community community : this.communities.getAllCommunities()) {
+//                    for (WeiboUser u : community.users.values())
+//                        u.tags.clear();
+//                }
                 AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
                     @Override
                     public void parseLine(String s) {
                         String[] sarr = s.split("\t");
                         if (sarr.length == 2) {
-                            FreqDist<String> freqDist = GsonSerializer.fromJson(sarr[1], freqDistStrType);
+                            FreqDist<String> freqDist = GsonSerializer.deserialize(sarr[1], freqDistStrType);
                             Community community = communities.getCommByUser(sarr[0]);
                             if (community != null) {
                                 community.users.get(sarr[0]).tags.merge(freqDist);
                             }
                         }
                     }
-                });
+                }, "UTF-8");
             } catch (Exception e) {
                 e.printStackTrace();
             }
