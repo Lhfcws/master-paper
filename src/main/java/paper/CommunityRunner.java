@@ -456,6 +456,7 @@ public class CommunityRunner implements CliRunner {
                     public void parseLine(String s) {
                         String[] sarr = s.split("\t");
                         if (sarr.length == 2) {
+                            System.out.println(sarr[1]);
                             FreqDist<String> freqDist = GsonSerializer.deserialize(sarr[1], freqDistStrType);
                             Community community = communities.getCommByUser(sarr[0]);
                             if (community != null) {
