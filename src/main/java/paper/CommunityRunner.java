@@ -398,9 +398,10 @@ public class CommunityRunner implements CliRunner {
             );
 
             System.out.println("[RUN] Merge tags");
-            contentTags(String.format(CONTENTTAG_FILE, theUserID));
-            attrTags(String.format(ATTRTAG_FILE, theUserID));
         }
+
+        contentTags(String.format(CONTENTTAG_FILE, theUserID));
+        attrTags(String.format(ATTRTAG_FILE, theUserID));
 
         return this;
     }
