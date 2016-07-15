@@ -13,6 +13,7 @@ import paper.community.model.util.GraphFilter;
 import paper.query.WeiboContentScanSpark;
 import paper.query.WeiboUserScanSpark;
 import paper.render.*;
+import paper.tag.TfIdfCalculator;
 import paper.tag.TfWdCalculator;
 import paper.tag.tagger.*;
 
@@ -417,10 +418,20 @@ public class CommunityRunner implements CliRunner {
             String outputFile = output;
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
+            TfIdfCalculator tfIdfCalculator = new TfIdfCalculator();
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
                 community.attrTags = tfWdCalculator.calc(5);
+                tfIdfCalculator.addDoc(community.id, community.attrTags);
+            }
+            tfIdfCalculator.calc();
+            for (Community community : this.communities.getAllCommunities()) {
+                TfIdfCalculator.Doc doc = tfIdfCalculator.getDoc(community.id);
+                community.attrTags = doc.getTfIdf();
+            }
+
+            for (Community community : this.communities.getAllCommunities()) {
                 System.out.println("[DEBUG] " + community.id + " " + community.attrTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
@@ -434,7 +445,6 @@ public class CommunityRunner implements CliRunner {
 
                 batchWriter.writeWithCache(sb.append("\n").toString());
             }
-
             batchWriter.flushNClose();
         }
     }
@@ -456,7 +466,6 @@ public class CommunityRunner implements CliRunner {
                     public void parseLine(String s) {
                         String[] sarr = s.split("\t");
                         if (sarr.length == 2) {
-                            System.out.println(sarr[1]);
                             FreqDist<String> freqDist = GsonSerializer.deserialize(sarr[1], freqDistStrType);
                             Community community = communities.getCommByUser(sarr[0]);
                             if (community != null) {
@@ -469,11 +478,22 @@ public class CommunityRunner implements CliRunner {
                 e.printStackTrace();
             }
 
+            TfIdfCalculator tfIdfCalculator = new TfIdfCalculator();
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
                 community.contentTags = tfWdCalculator.calc(5);
+                tfIdfCalculator.addDoc(community.id, community.contentTags);
+            }
+            tfIdfCalculator.calc();
+            for (Community community : this.communities.getAllCommunities()) {
+                TfIdfCalculator.Doc doc = tfIdfCalculator.getDoc(community.id);
+                community.contentTags = doc.getTfIdf();
+            }
+
+            // output community tags
+            for (Community community : this.communities.getAllCommunities()) {
                 System.out.println("[DEBUG] " + community.id + " " + community.contentTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")

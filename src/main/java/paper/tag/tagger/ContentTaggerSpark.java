@@ -78,7 +78,7 @@ public class ContentTaggerSpark implements Serializable {
                 FreqDist<String> freqDist = new FreqDist<String>();
                 for (String key : tp._2().keySet())
                     freqDist.put(key, 1);
-                list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(freqDist)).toString());
+                list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(tp._2())).toString());
                 return list;
             }
         }).saveAsTextFile(output + ".dir");
