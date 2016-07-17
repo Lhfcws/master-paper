@@ -10,10 +10,10 @@ import java.util.*;
  */
 public class CommFilterTag {
     public static List<List<Map.Entry<String, Double>>> filter(List<DoubleDist<String>> doubleDists, int topn) {
-        List<List<Map.Entry<String, Double>>> list = new ArrayList<>();
-        for (DoubleDist<String> doubleDist : doubleDists) {
-            list.add(doubleDist.sortValues(false));
-        }
+//        List<List<Map.Entry<String, Double>>> list = new ArrayList<>();
+//        for (DoubleDist<String> doubleDist : doubleDists) {
+//            list.add(doubleDist.sortValues(false));
+//        }
 
 //        while (true) {
 //            FreqDist<String> counter = new FreqDist<>();
@@ -51,8 +51,8 @@ public class CommFilterTag {
 //        }
 
         List<List<Map.Entry<String, Double>>> ret = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            List<Map.Entry<String, Double>> l = list.get(i);
+        for (int i = 0; i < doubleDists.size(); i++) {
+            List<Map.Entry<String, Double>> l = doubleDists.get(i).sortValues(false);
 
             if (topn < l.size())
                 ret.add(l.subList(0, topn));

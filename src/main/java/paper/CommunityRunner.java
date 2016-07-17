@@ -387,8 +387,10 @@ public class CommunityRunner implements CliRunner {
             System.out.println("[RUN] Merge tags");
         }
 
-        contentTags(String.format(CONTENTTAG_FILE, theUserID));
-        attrTags(String.format(ATTRTAG_FILE, theUserID));
+        if (!opts.contains(PARAM_NOCOMMTAG)) {
+            contentTags(String.format(CONTENTTAG_FILE, theUserID));
+            attrTags(String.format(ATTRTAG_FILE, theUserID));
+        }
 
         return this;
     }
@@ -455,6 +457,7 @@ public class CommunityRunner implements CliRunner {
     }
 
     public void contentTags(String output) throws IOException {
+        int ct = 20;
         if (!opts.contains(PARAM_NOCOMMTAG)) {
 
             System.out.println("[RUN] Calculate comm content tags and write to file.");
@@ -492,7 +495,7 @@ public class CommunityRunner implements CliRunner {
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.contentTags = tfWdCalculator.calc(topTag * 10);
+                community.contentTags = tfWdCalculator.calc(ct);
                 tfIdfCalculator.addDoc(community.id, community.contentTags);
             }
             tfIdfCalculator.calc();
@@ -502,15 +505,15 @@ public class CommunityRunner implements CliRunner {
                 community.contentTags = doc.getTfIdf();
                 communityTags.add(community.contentTags);
             }
-            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, topTag * 10);
+            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, ct);
 
             // output community tags
             for (int i = 0; i < communities.size(); i++) {
                 List<Map.Entry<String, Double>> entries = res.get(i);
                 Community community = communities.get(i);
                 community.evaluator.tfwd = community.contentTags;
-                community.evaluator.evaluate(topTag * 10);
-                community.evaluator.printSimple(topTag * 10);
+                community.evaluator.evaluate(ct);
+                community.evaluator.printSimple(ct);
                 System.out.println("[DEBUG] " + community.id + " " + community.contentTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
