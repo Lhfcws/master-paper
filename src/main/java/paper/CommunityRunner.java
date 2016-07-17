@@ -13,6 +13,7 @@ import paper.community.model.util.GraphFilter;
 import paper.query.WeiboContentScanSpark;
 import paper.query.WeiboUserScanSpark;
 import paper.render.*;
+import paper.tag.CommFilterTag;
 import paper.tag.TfIdfCalculator;
 import paper.tag.TfWdCalculator;
 import paper.tag.tagger.*;
@@ -417,26 +418,31 @@ public class CommunityRunner implements CliRunner {
             System.out.println("[RUN] Calculate comm attr tags and write to file.");
             String outputFile = output;
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
+
+            List<DoubleDist<String>> communityTags = new ArrayList<>();
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             TfIdfCalculator tfIdfCalculator = new TfIdfCalculator();
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.attrTags = tfWdCalculator.calc(5);
+                community.attrTags = tfWdCalculator.calc(topTag);
                 tfIdfCalculator.addDoc(community.id, community.attrTags);
             }
             tfIdfCalculator.calc();
-            for (Community community : this.communities.getAllCommunities()) {
+            List<Community> communities = new ArrayList<>(this.communities.getAllCommunities());
+            for (Community community : communities) {
                 TfIdfCalculator.Doc doc = tfIdfCalculator.getDoc(community.id);
                 community.attrTags = doc.getTfIdf();
             }
 
-            for (Community community : this.communities.getAllCommunities()) {
+            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, topTag);
+            for (int i = 0; i < communities.size(); i++) {
+                List<Map.Entry<String, Double>> entries = res.get(i);
+                Community community = communities.get(i);
                 System.out.println("[DEBUG] " + community.id + " " + community.attrTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
                         .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
-                List<Map.Entry<String, Double>> entries = community.attrTags.sortValues(false);
                 if (entries != null && !entries.isEmpty()) {
                     for (Map.Entry<String, Double> entry : entries)
                         sb.append(entry.getKey()).append("$");
@@ -478,27 +484,32 @@ public class CommunityRunner implements CliRunner {
                 e.printStackTrace();
             }
 
+            List<DoubleDist<String>> communityTags = new ArrayList<>();
             TfIdfCalculator tfIdfCalculator = new TfIdfCalculator();
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.contentTags = tfWdCalculator.calc(5);
+                community.contentTags = tfWdCalculator.calc(topTag);
                 tfIdfCalculator.addDoc(community.id, community.contentTags);
             }
             tfIdfCalculator.calc();
-            for (Community community : this.communities.getAllCommunities()) {
+            List<Community> communities = new ArrayList<>(this.communities.getAllCommunities());
+            for (Community community : communities) {
                 TfIdfCalculator.Doc doc = tfIdfCalculator.getDoc(community.id);
                 community.contentTags = doc.getTfIdf();
+                communityTags.add(community.contentTags);
             }
+            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, topTag);
 
             // output community tags
-            for (Community community : this.communities.getAllCommunities()) {
+            for (int i = 0; i < communities.size(); i++) {
+                List<Map.Entry<String, Double>> entries = res.get(i);
+                Community community = communities.get(i);
                 System.out.println("[DEBUG] " + community.id + " " + community.contentTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
                         .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
-                List<Map.Entry<String, Double>> entries = community.contentTags.sortValues(false);
                 if (entries != null && !entries.isEmpty()) {
                     for (Map.Entry<String, Double> entry : entries)
                         sb.append(entry.getKey()).append("$");
