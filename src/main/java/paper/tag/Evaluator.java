@@ -22,7 +22,8 @@ public class Evaluator {
 
     public void addSimple(FreqDist<String> tags) {
         for (Map.Entry<String, Integer> e : tags.entrySet()) {
-            simple.inc(e.getKey(), e.getValue());
+            if (!TagBlacklist.getInstance().contains(e.getKey()))
+                simple.inc(e.getKey(), e.getValue());
         }
     }
 
@@ -54,15 +55,23 @@ public class Evaluator {
             List<Integer> diffs = new ArrayList<>();
 
             int i = 0;
+            List<String> l1 = new ArrayList<>();
+            Set<String> l2 = new HashSet<>(index1.keySet());
             for (Map.Entry<String, Double> e : list) {
                 keys.add(e.getKey());
                 Integer index = index1.get(e.getKey());
                 int diff = topn;
-                if (index != null)
+                if (index != null) {
                     diff = Math.abs(i - index);
+                    l2.remove(e.getKey());
+                } else {
+                    l1.add(e.getKey());
+                }
+
                 diffs.add(diff);
                 i++;
             }
+            System.out.println(cid + " diff: " + l1 + " | " + l2);
 
             System.out.println(cid + " categories: " + GsonSerializer.serialize(keys));
             System.out.println(cid + " data: " + GsonSerializer.serialize(diffs));
