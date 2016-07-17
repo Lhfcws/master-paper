@@ -28,7 +28,7 @@ public class CommFilterTag {
 
             Set<String> toRemove = new HashSet<>();
             for (Map.Entry<String, Integer> e : counter.entrySet()) {
-                if (e.getValue() > list.size() / 2) {
+                if (e.getValue() > list.size() / 3) {
                     toRemove.add(e.getKey());
                 }
             }
