@@ -420,7 +420,6 @@ public class CommunityRunner implements CliRunner {
             String outputFile = output;
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
 
-            List<DoubleDist<String>> communityTags = new ArrayList<>();
             BatchWriter batchWriter = new BatchWriter(new FileOutputStream(outputFile));
             TfIdfCalculator tfIdfCalculator = new TfIdfCalculator();
             for (Community community : this.communities.getAllCommunities()) {
@@ -436,10 +435,10 @@ public class CommunityRunner implements CliRunner {
                 community.attrTags = doc.getTfIdf();
             }
 
-            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, topTag);
             for (int i = 0; i < communities.size(); i++) {
-                List<Map.Entry<String, Double>> entries = res.get(i);
                 Community community = communities.get(i);
+                List<Map.Entry<String, Double>> entries = community.attrTags.sortValues(false);
+                entries = CollectionUtil.subList(entries, topTag);
                 System.out.println("[DEBUG] " + community.id + " " + community.attrTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")
