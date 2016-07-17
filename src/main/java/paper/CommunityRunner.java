@@ -394,8 +394,6 @@ public class CommunityRunner implements CliRunner {
     }
 
     /**
-     * TODO 这里有个坑,我把user的tags覆盖掉了,因为懒,只是用来跑demo.
-     *
      * @param output
      * @throws IOException
      */
@@ -408,6 +406,7 @@ public class CommunityRunner implements CliRunner {
                     FreqDist<String> freqDist = GsonSerializer.deserialize(sarr[1], freqDistStrType);
                     Community community = communities.getCommByUser(sarr[0]);
                     if (community != null) {
+                        // TODO 这里有个坑,我把user的tags覆盖掉了,因为懒,只是用来跑demo.
                         community.users.get(sarr[0]).tags = freqDist;
                     }
                 }
@@ -463,10 +462,12 @@ public class CommunityRunner implements CliRunner {
 //            String outputFile = String.format(COMMTAG_FILE, theUserID);
 
             try {
-//                for (Community community : this.communities.getAllCommunities()) {
-//                    for (WeiboUser u : community.users.values())
+                for (Community community : this.communities.getAllCommunities()) {
+                    for (WeiboUser u : community.users.values()) {
 //                        u.tags.clear();
-//                }
+                        community.evaluator.addSimple(u.tags);
+                    }
+                }
                 AdvFile.loadFileInRawLines(fs.getHDFSFileInputStream(String.format(CONTENTTAG_FILE, theUserID)), new ILineParser() {
                     @Override
                     public void parseLine(String s) {
@@ -476,6 +477,7 @@ public class CommunityRunner implements CliRunner {
                             Community community = communities.getCommByUser(sarr[0]);
                             if (community != null) {
                                 community.users.get(sarr[0]).tags.merge(freqDist);
+                                community.evaluator.addSimple(freqDist);
                             }
                         }
                     }
@@ -490,7 +492,7 @@ public class CommunityRunner implements CliRunner {
             for (Community community : this.communities.getAllCommunities()) {
                 TfWdCalculator tfWdCalculator = new TfWdCalculator();
                 tfWdCalculator.setWeiboUsers(community.users.values());
-                community.contentTags = tfWdCalculator.calc(topTag);
+                community.contentTags = tfWdCalculator.calc(topTag * 10);
                 tfIdfCalculator.addDoc(community.id, community.contentTags);
             }
             tfIdfCalculator.calc();
@@ -500,12 +502,15 @@ public class CommunityRunner implements CliRunner {
                 community.contentTags = doc.getTfIdf();
                 communityTags.add(community.contentTags);
             }
-            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, topTag);
+            List<List<Map.Entry<String, Double>>> res = CommFilterTag.filter(communityTags, topTag * 10);
 
             // output community tags
             for (int i = 0; i < communities.size(); i++) {
                 List<Map.Entry<String, Double>> entries = res.get(i);
                 Community community = communities.get(i);
+                community.evaluator.tfwd = community.contentTags;
+                community.evaluator.evaluate(topTag * 10);
+                community.evaluator.printSimple(topTag * 10);
                 System.out.println("[DEBUG] " + community.id + " " + community.contentTags);
 
                 StringBuilder sb = new StringBuilder().append(community.id).append("\t")

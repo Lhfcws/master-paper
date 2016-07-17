@@ -55,8 +55,8 @@ public class ContentTaggerSpark implements Serializable {
 
                 if (sarr.length == 2) {
                     String uid = sarr[0];
-//                    SimpleContentTagger tagger = SimpleContentTagger.getInstance();
-                    ContentTagger tagger = ContentTagger.getInstance();
+                    SimpleContentTagger tagger = SimpleContentTagger.getInstance();
+//                    ContentTagger tagger = ContentTagger.getInstance();
                     FreqDist<String> tags = tagger.tag(sarr[1]);
                     if (tags != null)
                         tagDist.merge(tags);
@@ -76,10 +76,11 @@ public class ContentTaggerSpark implements Serializable {
             @Override
             public Iterable<String> call(Tuple2<String, FreqDist<String>> tp) throws Exception {
                 List<String> list = new ArrayList<String>();
-                FreqDist<String> freqDist = new FreqDist<String>();
-                for (String key : tp._2().keySet())
-                    freqDist.put(key, 1);
-                list.add(new StringBuilder(tp._1()).append("\t").append(GsonSerializer.toJson(tp._2())).toString());
+//                FreqDist<String> freqDist = new FreqDist<String>();
+//                for (String key : tp._2().keySet())
+//                    freqDist.put(key, 1);
+                list.add(new StringBuilder(tp._1()).append("\t")
+                        .append(GsonSerializer.toJson(tp._2())).toString());
                 return list;
             }
         }).saveAsTextFile(output + ".dir");
@@ -93,37 +94,5 @@ public class ContentTaggerSpark implements Serializable {
         }
 
         System.out.println("ContentTaggerSpark DONE");
-    }
-
-    public static class Taggers implements Serializable {
-        // ============= SINGLETON ==========
-
-        private static Taggers _singleton = null;
-
-        public static Taggers getInstance() {
-            if (_singleton == null)
-                synchronized (Taggers.class) {
-                    if (_singleton == null) {
-                        _singleton = new Taggers();
-                    }
-                }
-            return _singleton;
-        }
-
-        protected List<Tagger> taggerList;
-
-        private Taggers() {
-            taggerList = Arrays.asList(new Tagger[]{
-                    SimpleContentTagger.getInstance()
-            });
-        }
-
-        public List<Tagger> getTaggerList() {
-            return taggerList;
-        }
-
-        public void setTaggerList(List<Tagger> taggerList) {
-            this.taggerList = taggerList;
-        }
     }
 }

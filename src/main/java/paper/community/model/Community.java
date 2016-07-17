@@ -2,6 +2,7 @@ package paper.community.model;
 
 import com.yeezhao.commons.util.DoubleDist;
 import paper.render.ColorBuilder;
+import paper.tag.Evaluator;
 
 import java.awt.*;
 import java.util.*;
@@ -18,12 +19,11 @@ public class Community {
     public List<String> kols = new LinkedList<>();
     public DoubleDist<String> contentTags = new DoubleDist<>();
     public DoubleDist<String> attrTags = new DoubleDist<>();
+    public transient Evaluator evaluator;
 
     public Community(int id) {
         this.id = id;
-    }
-
-    public Community() {
+        evaluator = new Evaluator(id);
     }
 
     public Community addUser(String uid, WeiboUser user) {
