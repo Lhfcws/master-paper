@@ -72,7 +72,7 @@ public class CommunityRunner implements CliRunner {
 
     // MEMBERs
     protected Communities communities;
-    protected int topNComm = 20;
+    protected int topNComm = 15;
     protected int topNKol = 10;
     protected int topTag = 15;
     protected int topNDots = 1500;
