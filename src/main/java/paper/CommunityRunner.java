@@ -445,7 +445,7 @@ public class CommunityRunner implements CliRunner {
                         .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
                 if (entries != null && !entries.isEmpty()) {
                     for (Map.Entry<String, Double> entry : entries)
-                        sb.append(entry.getKey()).append("$");
+                        sb.append(entry.getKey()).append("#").append(entry.getValue()).append("$");
                     sb.setLength(sb.length() - 1);
                 }
 
@@ -519,7 +519,7 @@ public class CommunityRunner implements CliRunner {
                         .append("#" + ColorBuilder.toRGBStr(community.color)).append("\t");
                 if (entries != null && !entries.isEmpty()) {
                     for (Map.Entry<String, Double> entry : entries)
-                        sb.append(entry.getKey()).append("$");
+                        sb.append(entry.getKey()).append("#").append(entry.getValue()).append("$");
                     sb.setLength(sb.length() - 1);
                 }
 
