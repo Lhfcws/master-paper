@@ -125,8 +125,8 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
             );
         }
 
-        int[] as = new int[] {100,};
-        int[] rs = new int[] {5, };
+        int[] as = new int[] {50,};
+        int[] rs = new int[] {1, };
 
         int a = conf.getInt("fa2c.community.attraction", 50);
         int r = conf.getInt("fa2c.community.repulsion", 1);
