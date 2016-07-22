@@ -210,14 +210,15 @@ public class CommunityForce extends ForceAtlas2{
         // Repulsion (and gravity)
         // NB: Muti-threaded
 //        RepulsionForce Repulsion = ForceFactory.builder.buildRepulsion(isAdjustSizes(), getScalingRatio());
-        RepulsionForce Repulsion = new CommunityRepulsionForce(ForceFactory.builder, getScalingRatio(), communityRepulsion);
+        RepulsionForce repulsion = new CommunityRepulsionForce(ForceFactory.builder, getScalingRatio(), communityRepulsion);
+        RepulsionForce r = (isStrongGravityMode()) ? (ForceFactory.builder.getStrongGravity(getScalingRatio())) : (repulsion);
         int taskCount = 8 * currentThreadCount;  // The threadPool Executor Service will manage the fetching of tasks and threads.
         // We make more tasks than threads because some tasks may need more time to compute.
         ArrayList<Future> threads = new ArrayList();
         for (int t = taskCount; t > 0; t--) {
             int from = (int) Math.floor(nodes.length * (t - 1) / taskCount);
             int to = (int) Math.floor(nodes.length * t / taskCount);
-            Future future = pool.submit(new NodesThread(nodes, from, to, isBarnesHutOptimize(), getBarnesHutTheta(), 0.9 * getGravity(), (isStrongGravityMode()) ? (ForceFactory.builder.getStrongGravity(getScalingRatio())) : (Repulsion), getScalingRatio(), rootRegion, Repulsion));
+            Future future = pool.submit(new NodesThread(nodes, from, to, isBarnesHutOptimize(), getBarnesHutTheta(), 0.5 * getGravity(), repulsion, getScalingRatio(), rootRegion, repulsion));
             threads.add(future);
         }
         for (Future future : threads) {
