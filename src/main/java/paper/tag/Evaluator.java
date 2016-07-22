@@ -22,7 +22,7 @@ public class Evaluator {
 
     public void addSimple(FreqDist<String> tags) {
         for (Map.Entry<String, Integer> e : tags.entrySet()) {
-            if (!TagBlacklist.getInstance().contains(e.getKey()))
+            if (!ContentTagBlacklist.getInstance().contains(e.getKey()))
                 simple.inc(e.getKey(), e.getValue());
         }
     }
