@@ -14,6 +14,7 @@ import org.gephi.layout.plugin.forceAtlas2.Region;
 public class CommunityRepulsionForce extends ForceFactory.RepulsionForce {
     private double coefficient;
     private double communityRepulsion;
+    public static volatile double maxDis = 0;
 
     public CommunityRepulsionForce(ForceFactory factory, double coefficient, double communityRepulsion) {
         factory.super();
@@ -30,6 +31,7 @@ public class CommunityRepulsionForce extends ForceFactory.RepulsionForce {
         double xDist = n1.getNodeData().x() - n2.getNodeData().x();
         double yDist = n1.getNodeData().y() - n2.getNodeData().y();
         double distance = (float) Math.sqrt(xDist * xDist + yDist * yDist);
+        if (maxDis < distance) maxDis = distance;
 
         if (distance > 0) {
             // NB: factor = force / distance
@@ -37,7 +39,7 @@ public class CommunityRepulsionForce extends ForceFactory.RepulsionForce {
             if (n1.getNodeData().getAttributes().getValue("community") == n2.getNodeData().getAttributes().getValue("community"))
                 factor /= communityRepulsion;
             else {
-                double d = Math.log(distance);
+                double d = 1;
                 if (d < 1) d = 1;
                 factor *= communityRepulsion * d;
             }

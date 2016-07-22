@@ -109,8 +109,8 @@ public abstract class CommunityGraphDrawer {
     protected Layout buildLayout() {
 //        Layout layout = buildFruchtermanReingoldLayout();
 //        Layout layout = buildForceAtlasLayout();
-        Layout layout = buildForceAtlas2Layout();
-//        Layout layout = buildForceAtlas2cLayout();
+//        Layout layout = buildForceAtlas2Layout();
+        Layout layout = buildForceAtlas2cLayout();
         return layout;
     }
 

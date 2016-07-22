@@ -218,7 +218,7 @@ public class CommunityForce extends ForceAtlas2{
         for (int t = taskCount; t > 0; t--) {
             int from = (int) Math.floor(nodes.length * (t - 1) / taskCount);
             int to = (int) Math.floor(nodes.length * t / taskCount);
-            Future future = pool.submit(new NodesThread(nodes, from, to, isBarnesHutOptimize(), getBarnesHutTheta(), 0.5 * getGravity(), r, getScalingRatio(), rootRegion, repulsion));
+            Future future = pool.submit(new NodesThread(nodes, from, to, isBarnesHutOptimize(), getBarnesHutTheta(), 0.2 * getGravity(), r, getScalingRatio(), rootRegion, repulsion));
             threads.add(future);
         }
         for (Future future : threads) {
@@ -345,6 +345,7 @@ public class CommunityForce extends ForceAtlas2{
 //            }
 //        }
 
+        System.out.println("MaxDistance: " + ((CommunityRepulsionForce)repulsion).maxDis);
         graph.readUnlockAll();
     }
 
