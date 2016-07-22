@@ -260,8 +260,8 @@ public class CommunityRunner implements CliRunner {
         for (int i = 0; i < list.size(); i++) {
             Community community = list.get(i);
             // lookup kols
-//            kolLookup.lookup(community, topNKol);
-//            System.out.println("[INFO] Looked up " + community.id + " kol size: " + community.kols.size() + ",  " + community.kols);
+            kolLookup.lookup(community, topNKol);
+            System.out.println("[INFO] Looked up " + community.id + " kol size: " + community.kols.size() + ",  " + community.kols);
             // filter rubbish community
             if (rubbishCommunityRecognizer.isRubbish(community)) {
 //                System.out.println("[RUBBISH] " + community.id + ", kols: " + community.kols);
