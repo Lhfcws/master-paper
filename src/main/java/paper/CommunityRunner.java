@@ -14,6 +14,7 @@ import paper.query.WeiboContentScanSpark;
 import paper.query.WeiboUserScanSpark;
 import paper.render.*;
 import paper.tag.CommFilterTag;
+import paper.tag.Evaluator;
 import paper.tag.TfIdfCalculator;
 import paper.tag.TfWdCalculator;
 import paper.tag.tagger.*;
@@ -525,6 +526,7 @@ public class CommunityRunner implements CliRunner {
 
                 batchWriter.writeWithCache(sb.append("\n").toString());
             }
+            System.out.println("[Variance] " + Evaluator.variances);
 
             batchWriter.flushNClose();
         }
