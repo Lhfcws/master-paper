@@ -73,11 +73,23 @@ public class Evaluator {
                 diffs.add(diff);
                 i++;
             }
-            variances.add(MathFunctions.variance(diffs));
+            variances.add(variance(diffs));
             System.out.println(cid + " diff: " + l1 + " | " + l2);
 
             System.out.println(cid + " categories: " + GsonSerializer.serialize(keys));
             System.out.println(cid + " data: " + GsonSerializer.serialize(diffs));
         }
+    }
+
+    public static double variance(List<Integer> arr) {
+        double sum = 0;
+        int cnt = 0;
+
+        for (Integer d : arr)
+            if (d < 20) {
+                cnt++;
+                sum += d.doubleValue() * d.doubleValue();
+            }
+        return sum / cnt;
     }
 }

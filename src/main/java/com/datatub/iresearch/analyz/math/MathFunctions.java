@@ -20,6 +20,6 @@ public class MathFunctions {
         for (Number d : arr) {
             sum += d.doubleValue() * d.doubleValue();
         }
-        return sum;
+        return sum / arr.size();
     }
 }
