@@ -35,11 +35,14 @@ public class CommunityAttractionForce extends ForceFactory.AttractionForce {
 //            double factor = -coefficient * n1Layout.mass * n2Layout.mass / distance / distance;
             double factor = -coefficient * w;
 
-            if (n1.getNodeData().getAttributes().getValue("community") == n2.getNodeData().getAttributes().getValue("community")){
-                double d = Math.log(distance);
+            if (n1.getNodeData().getAttributes().getValue("community").equals(n2.getNodeData().getAttributes().getValue("community"))) {
+                double d = Math.log(distance)
+//                        / Math.log(1.4)
+                        ;
+//                double d = 1;
                 if (d < 1) d = 1;
                 factor *= communityAttraction * d;
-            }else{
+            } else {
                 factor /= communityAttraction;
             }
 

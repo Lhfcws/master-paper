@@ -59,9 +59,11 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
     }
 
     public static void main(String[] args) throws Exception {
-        int topNComm = 15;
-        String clusterFN = "community_1945133444_clusters.txt";
-        String relFN = "community_1945133444_relations.txt";
+        int topNComm = 20;
+//        String clusterFN = "community_1945133444_clusters.txt";
+        String clusterFN = "1726918143-pyresult.txt";
+//        String relFN = "community_1945133444_relations.txt";
+        String relFN = "1726918143-relation.txt";
 
         Configuration conf = MLLibConfiguration.getInstance();
         InputStream clusterIn = conf.getConfResourceAsInputStream(clusterFN);
@@ -125,8 +127,8 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
             );
         }
 
-        int[] as = new int[] {50,};
-        int[] rs = new int[] {1, };
+        int[] as = new int[] {100,};
+        int[] rs = new int[] {5, };
 
         int a = conf.getInt("fa2c.community.attraction", 50);
         int r = conf.getInt("fa2c.community.repulsion", 1);
@@ -144,7 +146,7 @@ public class WbGraphDrawer extends CommunityGraphDrawer {
                 WbGraphDrawer drawer = new WbGraphDrawer(configuration);
                 drawer.buildGraph(graph);
                 drawer.startLayout();
-                drawer.export("/Users/lhfcws/coding/workspace/branches/lhfcws-paper1/src/main/resources/_layout-" + a + "-" + r + ".gexf");
+                drawer.export("/Users/lhfcws/coding/workspace/branches/lhfcws-paper1/src/main/resources/2d-layout-" + a + "-" + r + ".gexf");
                 System.out.println("Export done.");
                 drawer.stopLayout();
             }

@@ -1,5 +1,6 @@
 package paper.tag;
 
+import com.datatub.iresearch.analyz.math.MathFunctions;
 import com.yeezhao.commons.util.CollectionUtil;
 import com.yeezhao.commons.util.DoubleDist;
 import com.yeezhao.commons.util.FreqDist;
@@ -14,6 +15,7 @@ import java.util.*;
 public class Evaluator {
     public DoubleDist<String> simple = new DoubleDist<>();
     public DoubleDist<String> tfwd = null;
+    public static List<Double> variances = new ArrayList<>();
     public int cid;
 
     public Evaluator(int cid) {
@@ -71,6 +73,7 @@ public class Evaluator {
                 diffs.add(diff);
                 i++;
             }
+            variances.add(MathFunctions.variance(diffs));
             System.out.println(cid + " diff: " + l1 + " | " + l2);
 
             System.out.println(cid + " categories: " + GsonSerializer.serialize(keys));
